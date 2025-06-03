@@ -1,6 +1,6 @@
 ﻿import { addNewAsset, getAssets, getAssetById, updateAsset, deleteAsset } from '../controllers/assetController.js';
 
-const routes = (app) => {
+export default function routes(app) {
     app.route('/assets')
         .get(getAssets)
         .post(addNewAsset);
@@ -11,4 +11,3 @@ const routes = (app) => {
         .delete(deleteAsset);
 }
 
-export default routes;

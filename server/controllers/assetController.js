@@ -7,8 +7,9 @@ export const addNewAsset = async (req, res) => {
     try {
         const newAsset = new Asset(req.body);
         const asset = await newAsset.save();
-        res.json(asset);
+        res.status(201).json(asset);
     } catch (err) {
+        console.error('Asset creation failed:', err);
         res.status(400).send(err.message || err);
     }
 }
