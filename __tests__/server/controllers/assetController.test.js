@@ -140,4 +140,247 @@ describe('Asset Controller', () => {
         });
 
     });
+
+    describe('GET /assets', () => {
+        it('should return all assets', async () => {
+            // Insert a test asset
+            const assetData = {
+                Name: "Test Asset GET",
+                AssetType: { AssetTypeID: "get-001", Name: "Peripheral" },
+                Location: { LocationID: "get-loc-001", Name: "Test Location" },
+                SerialNumber: "GET-TEST-001",
+                Status: "Active",
+                Supplier: {
+                    SupplierID: "get-supp-001",
+                    Name: "Get Supplier",
+                    ContactEmail: "get@supplier.com"
+                }
+            };
+            await request(app).post('/assets').send(assetData).expect(201);
+
+            const response = await request(app)
+                .get('/assets')
+                .expect(200);
+
+            expect(response.body.success).toBe(true);
+            expect(Array.isArray(response.body.data)).toBe(true);
+            // At least one asset should be present
+            expect(response.body.data.length).toBeGreaterThan(0);
+            // The asset we just added should be in the response
+            const found = response.body.data.find(a => a.SerialNumber === "GET-TEST-001");
+            expect(found).toBeDefined();
+            expect(found.Name).toBe("Test Asset GET");
+        });
+
+        it('should return an empty array if no assets exist', async () => {
+            // Remove all assets
+            await Asset.deleteMany({});
+            const response = await request(app)
+                .get('/assets')
+                .expect(200);
+
+            expect(response.body.success).toBe(true);
+            expect(Array.isArray(response.body.data)).toBe(true);
+            expect(response.body.data.length).toBe(0);
+        });
+
+        it('should handle database errors gracefully', async () => {
+            // Temporarily mock Asset.find to throw
+            const originalFind = Asset.find;
+            Asset.find = () => { throw new Error('DB error'); };
+
+            const response = await request(app)
+                .get('/assets')
+                .expect(400);
+
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toMatch(/failed to retrieve assets/i);
+
+            // Restore original method
+            Asset.find = originalFind;
+        });
+    });
+
+    describe('GET /assets/:assetId', () => {
+        let assetId;
+
+        beforeEach(async () => {
+            const asset = new Asset({
+                Name: "Asset To Fetch",
+                AssetType: { AssetTypeID: "get-id-001", Name: "Peripheral" },
+                Location: { LocationID: "get-loc-001", Name: "Location A" },
+                SerialNumber: "GET-ID-001",
+                Status: "Active",
+                Supplier: {
+                    SupplierID: "get-supp-001",
+                    Name: "Supplier A",
+                    ContactEmail: "getid@supplier.com"
+                }
+            });
+            const saved = await asset.save();
+            assetId = saved._id;
+        });
+
+        afterEach(async () => {
+            await Asset.deleteMany({});
+        });
+
+        it('should return a single asset by ID', async () => {
+            const response = await request(app)
+                .get(`/assets/${assetId}`)
+                .expect(200);
+
+            expect(response.body.success).toBe(true);
+            expect(response.body.message).toMatch(/retrieved/i);
+            expect(response.body.data).toHaveProperty('_id', assetId.toString());
+        });
+
+        it('should return 404 if asset is not found', async () => {
+            const nonExistentId = new mongoose.Types.ObjectId();
+            const response = await request(app)
+                .get(`/assets/${nonExistentId}`)
+                .expect(404);
+
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toMatch(/not found/i);
+        });
+
+        it('should handle database errors gracefully', async () => {
+            const original = Asset.findById;
+            Asset.findById = () => { throw new Error('GET BY ID DB error'); };
+
+            const response = await request(app)
+                .get(`/assets/${assetId}`)
+                .expect(400);
+
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toMatch(/failed to retrieve asset/i);
+
+            Asset.findById = original;
+        });
+    });
+
+    describe('PUT /assets/:assetId', () => {
+        let assetId;
+
+        beforeEach(async () => {
+            // Create an asset to update
+            const asset = new Asset({
+                Name: "Asset To Update",
+                AssetType: { AssetTypeID: "put-001", Name: "Peripheral" },
+                Location: { LocationID: "put-loc-001", Name: "Update Location" },
+                SerialNumber: "PUT-TEST-001",
+                Status: "Active",
+                Supplier: {
+                    SupplierID: "put-supp-001",
+                    Name: "Put Supplier",
+                    ContactEmail: "put@supplier.com"
+                }
+            });
+            const saved = await asset.save();
+            assetId = saved._id;
+        });
+
+        afterEach(async () => {
+            await Asset.deleteMany({});
+        });
+
+        it('should update an existing asset', async () => {
+            const update = { Name: "Updated Asset Name" };
+            const response = await request(app)
+                .put(`/assets/${assetId}`)
+                .send(update)
+                .expect(200);
+
+            expect(response.body.success).toBe(true);
+            expect(response.body.data.Name).toBe("Updated Asset Name");
+        });
+
+        it('should return 404 if asset not found', async () => {
+            const nonExistentId = new mongoose.Types.ObjectId();
+            const response = await request(app)
+                .put(`/assets/${nonExistentId}`)
+                .send({ Name: "Doesn't Matter" })
+                .expect(404);
+
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toMatch(/not found/i);
+        });
+
+        it('should handle errors gracefully', async () => {
+            // Temporarily mock findByIdAndUpdate to throw
+            const original = Asset.findByIdAndUpdate;
+            Asset.findByIdAndUpdate = () => { throw new Error('PUT DB error'); };
+
+            const response = await request(app)
+                .put(`/assets/${assetId}`)
+                .send({ Name: "Error Asset" })
+                .expect(400);
+
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toMatch(/failed to update asset/i);
+
+            Asset.findByIdAndUpdate = original;
+        });
+    });
+
+    describe('DELETE /assets/:assetId', () => {
+        let assetId;
+
+        beforeEach(async () => {
+            // Create an asset to delete
+            const asset = new Asset({
+                Name: "Asset To Delete",
+                AssetType: { AssetTypeID: "del-001", Name: "Peripheral" },
+                Location: { LocationID: "del-loc-001", Name: "Delete Location" },
+                SerialNumber: "DEL-TEST-001",
+                Status: "Active",
+                Supplier: {
+                    SupplierID: "del-supp-001",
+                    Name: "Del Supplier",
+                    ContactEmail: "del@supplier.com"
+                }
+            });
+            const saved = await asset.save();
+            assetId = saved._id;
+        });
+
+        afterEach(async () => {
+            await Asset.deleteMany({});
+        });
+
+        it('should delete an existing asset', async () => {
+            const response = await request(app)
+                .delete(`/assets/${assetId}`)
+                .expect(200);
+
+            expect(response.body.success).toBe(true);
+            expect(response.body.data._id).toBe(assetId.toString());
+        });
+
+        it('should return 404 if asset not found', async () => {
+            const nonExistentId = new mongoose.Types.ObjectId();
+            const response = await request(app)
+                .delete(`/assets/${nonExistentId}`)
+                .expect(404);
+
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toMatch(/not found/i);
+        });
+
+        it('should handle errors gracefully', async () => {
+            // Temporarily mock findByIdAndDelete to throw
+            const original = Asset.findByIdAndDelete;
+            Asset.findByIdAndDelete = () => { throw new Error('DELETE DB error'); };
+
+            const response = await request(app)
+                .delete(`/assets/${assetId}`)
+                .expect(400);
+
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toMatch(/failed to delete asset/i);
+
+            Asset.findByIdAndDelete = original;
+        });
+    });
 });
