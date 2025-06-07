@@ -2,52 +2,56 @@
 
 const Schema = mongoose.Schema;
 
+// Define the Asset schema
 export const AssetSchema = new Schema({
-    Name: {
+    name: {
         type: String,
         required: 'Enter a name for the asset'
     },
-    AssetType: {
-        AssetTypeID: {
+    // embedded asset type information
+    assetType: {
+        assetTypeID: {
             type: String,
             required: 'Enter an asset type ID'
         },
-        Name: {
+        name: {
             type: String,
             required: 'Enter a type for the asset'
         }
     },
-    Location: {
-        LocationID: {
+    // embedded location information
+    location: {
+        locationID: {
             type: String,
             required: 'Enter a location ID'
         },
-        Name: {
+        name: {
             type: String,
             required: 'Enter a location name for the asset'
         }
     },
-    SerialNumber: {
+    serialNumber: {
         type: String,
         required: 'Enter a serial number for the asset',
         unique: true
     },
-    Status: {
+    status: {
         type: String,
         required: 'Enter a status for the asset',
         enum: ['Active', 'Inactive', 'Maintenance', 'Retired'],
         default: 'Active'
     },
-    Supplier: {
-        SupplierID: {
+    // embedded supplier information
+    supplier: {
+        supplierID: {
             type: String,
             required: 'Enter a supplier ID'
         },
-        Name: {
+        name: {
             type: String,
             required: 'Enter a name for the supplier'
         },
-        ContactEmail: {
+        contactEmail: {
             type: String,
             required: 'Enter a contact email for the asset',
             validate: {
@@ -57,16 +61,18 @@ export const AssetSchema = new Schema({
                 message: props => `${props.value} is not a valid email address`
             }
         },
-        Phone: {
+        phone: {
             type: String
         },
-        Website: {
+        website: {
             type: String
         }
     }
 }, {
+    // Add created and updated timestamps
     timestamps: true
 });
 
-AssetSchema.index({ SerialNumber: 1 });
+// Create an index on the serialNumber field for faster lookups and uniqueness
+AssetSchema.index({ serialNumber: 1 });
 
