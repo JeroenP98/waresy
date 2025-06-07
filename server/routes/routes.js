@@ -5,7 +5,7 @@ import {
     registerUser,
     isAdmin,
     getUserByEmail,
-    getAllUsers, updateUser
+    getAllUsers, updateUser, deleteUser
 } from '../controllers/userController.js';
 
 // define the routes for the application
@@ -31,7 +31,8 @@ export default function routes(app) {
     app.route('/auth/user')
         .get(loginRequired, getUserByEmail);
     app.route('/auth/user/:email')
-        .patch(loginRequired, updateUser);
+        .patch(loginRequired, updateUser)
+        .delete(loginRequired, isAdmin, deleteUser); // Admin-only route to delete user
     // Admin-only route to get all users
     app.route('/auth/users')
         .get(loginRequired, isAdmin, getAllUsers);

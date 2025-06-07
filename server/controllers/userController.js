@@ -35,25 +35,33 @@ export const registerUser = async (req, res) => {
 
 // Function to log in a user
 export const loginUser = async (req, res) => {
+    try {
+        const user = await User.findOne({ email: req.body.email });
 
-    User.findOne({email: req.body.email})
-        .then((user) => {
-            // If user not found, return error
-            if (!user.comparePassword(req.body.password, user.hashPassword)) {
-                // If password does not match, return error
-                return ApiResponse.error(res, "Invalid password", 401);
-            } else {
-                // If user found and password matches, generate JWT token
-                return ApiResponse.success(res, "User successfully logged in", {
-                    token: jwt.sign({ email: user.email, _id: user._id, role: user.role }, process.env.JWT_SECRET)
-                }, 200);
-            }
-        })
-        .catch((err) => {
-            return ApiResponse.error(res, err.message || "Error occurred", 400);
-        })
+        // Handle user not found
+        if (!user) {
+            return ApiResponse.error(res, "User not found", 404);
+        }
 
-}
+        // Handle password mismatch
+        const isMatch = await user.comparePassword(req.body.password, user.hashPassword);
+        if (!isMatch) {
+            return ApiResponse.error(res, "Invalid password", 401);
+        }
+
+        // All good, return token
+        const token = jwt.sign(
+            { email: user.email, _id: user._id, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: "1h" }
+        );
+
+        return ApiResponse.success(res, "User successfully logged in", { token }, 200);
+
+    } catch (err) {
+        return ApiResponse.error(res, err.message || "Login failed", 400);
+    }
+};
 
 // Middleware to check if the user is an admin
 export const isAdmin = (req, res, next) => {
@@ -106,20 +114,28 @@ export const getAllUsers = async (req, res) => {
 export const updateUser = async (req, res) => {
     const targetEmail = req.params.email;
 
-    // Only allow users to update themselves, or allow admins
-    if (!req.user || (req.user.email !== targetEmail && req.user.role !== 'Admin')) {
+    // Only allow users to update themselves, or admins
+    const isSelf = req.user && req.user.email === targetEmail;
+    const isAdmin = req.user && req.user.role === 'Admin';
+
+    if (!isSelf && !isAdmin) {
         return ApiResponse.error(res, 'Access denied: You can only update your own profile', 403);
     }
 
+    const updateData = { ...req.body };
+
+    // If a non-admin tries to change their role — block it
+    if (!isAdmin && updateData.role && updateData.role !== 'User') {
+        return ApiResponse.error(res, 'You are not allowed to change your role', 403);
+    }
+
+    // If password is provided, hash it
+    if (updateData.password) {
+        updateData.hashPassword = bcrypt.hashSync(updateData.password, 10);
+        delete updateData.password;
+    }
+
     try {
-        const updateData = { ...req.body };
-
-        // If the password is being updated, hash it
-        if (updateData.password) {
-            updateData.hashPassword = bcrypt.hashSync(updateData.password, 10);
-            delete updateData.password;
-        }
-
         const updatedUser = await User.findOneAndUpdate(
             { email: targetEmail },
             updateData,
@@ -133,5 +149,23 @@ export const updateUser = async (req, res) => {
         return ApiResponse.success(res, 'User successfully updated', updatedUser);
     } catch (err) {
         return ApiResponse.error(res, 'Failed to update user: ' + (err.message || err));
+    }
+};
+
+export const deleteUser = async (req, res) => {
+    try {
+        const user = await User.findOneAndDelete({ email: req.params.email });
+
+        if (!user) {
+            return ApiResponse.error(res, 'User not found', 404);
+        }
+
+        return ApiResponse.success(res, 'User successfully deleted', {
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName
+        });
+    } catch (err) {
+        return ApiResponse.error(res, 'Failed to delete user: ' + (err.message || err));
     }
 };
