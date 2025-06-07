@@ -6,19 +6,20 @@
   "scripts": {
     "start": "nodemon server/server.js --exec ts-node",
     "test": "cross-env MONGODB_URI=mongodb://127.0.0.1:27017/waresy_test node --experimental-vm-modules node_modules/jest/bin/jest.js --collectCoverage --forceExit --detectOpenHandles"
-
   },
   "jest": {
     "transform": {}
   },
   "keywords": [],
-  "author": "",
+  "author": "Jeroen Post",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.16.0",
     "mongoose": "^8.15.1"
   },
