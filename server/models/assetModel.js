@@ -49,7 +49,13 @@ export const AssetSchema = new Schema({
         },
         ContactEmail: {
             type: String,
-            required: 'Enter a contact email for the asset'
+            required: 'Enter a contact email for the asset',
+            validate: {
+                validator: function(v) {
+                    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+                },
+                message: props => `${props.value} is not a valid email address`
+            }
         },
         Phone: {
             type: String
