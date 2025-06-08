@@ -1,0 +1,40 @@
+﻿name: unitTests.yml
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:6.0
+        ports:
+          - 27017:27017
+        options: --quiet
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.12.0 # Match your local Node.js version
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Set environment variables
+        run: echo "MONGODB_URI=mongodb://localhost:27017/waresy_test" >> $GITHUB_ENV
+
+      - name: Run tests
+        run: npm test
