@@ -10,6 +10,9 @@ permissions:
   actions: read
   checks: write
 
+env:
+  JWT_SECRET: test_secret_key
+
 jobs:
   test:
     runs-on: ubuntu-latest
