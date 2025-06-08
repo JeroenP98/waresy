@@ -304,6 +304,54 @@ describe('Supplier Controller', () => {
             expect(res.body.data).toHaveProperty('name', 'Updated Supplier Name');
         });
 
+        it('should update embedded supplier in assets when supplier is patched', async () => {
+            // Create supplier
+            const supplierRes = await request(app)
+                .post('/suppliers')
+                .set('Authorization', `Bearer ${authToken}`)
+                .send({
+                    name: 'Original Supplier',
+                    contactEmail: 'original@supplier.com'
+                })
+                .expect(201);
+            const supplierId = supplierRes.body.data._id;
+
+            // Create asset with embedded supplier
+            const assetRes = await request(app)
+                .post('/assets')
+                .set('Authorization', `Bearer ${authToken}`)
+                .send({
+                    name: "Test Asset",
+                    assetType: { assetTypeID: "test-asset", name: "Peripheral" },
+                    location: { locationID: "loc-001", name: "Main Office" },
+                    serialNumber: "TEST-EMBED-001",
+                    status: "Active",
+                    supplier: {
+                        supplierID: supplierId,
+                        name: "Original Supplier",
+                        contactEmail: "original@supplier.com"
+                    }
+                })
+                .expect(201);
+
+            // Patch supplier
+            const updatedEmail = 'updated@supplier.com';
+            await request(app)
+                .patch(`/suppliers/${supplierId}`)
+                .set('Authorization', `Bearer ${authToken}`)
+                .send({ contactEmail: updatedEmail })
+                .expect(200);
+
+            // Fetch updated asset
+            const updatedAssetRes = await request(app)
+                .get(`/assets/${assetRes.body.data._id}`)
+                .set('Authorization', `Bearer ${authToken}`)
+                .expect(200);
+
+            expect(updatedAssetRes.body.data.supplier.contactEmail).toBe(updatedEmail);
+        });
+
+
         it('should return 400 for invalid email format', async () => {
             const res = await request(app)
                 .patch(`/suppliers/${supplierId}`)

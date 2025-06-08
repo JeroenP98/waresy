@@ -14,6 +14,13 @@ import {
     getSuppliers,
     updateSupplier
 } from "../controllers/supplierController.js";
+import {
+    createAssetType,
+    deleteAssetType,
+    getAssetTypeById,
+    getAssetTypes,
+    updateAssetType
+} from "../controllers/assetTypeController.js";
 
 // define the routes for the application
 export default function routes(app) {
@@ -54,5 +61,14 @@ export default function routes(app) {
         .patch(loginRequired, updateSupplier)
         .delete(loginRequired, deleteSupplier);
 
+    // Asset type routes
+    app.route('/asset-types')
+        .get(loginRequired, getAssetTypes)
+        .post(loginRequired, createAssetType);
+
+    app.route('/asset-types/:assetTypeId')
+        .get(loginRequired, getAssetTypeById)
+        .patch(loginRequired, updateAssetType)
+        .delete(loginRequired, deleteAssetType);
 }
 

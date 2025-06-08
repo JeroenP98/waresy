@@ -55,7 +55,7 @@ export const updateSupplier = async (req, res) => {
 
         // Update all assets that embed this supplier (match by ID)
         await Asset.updateMany(
-            { 'supplier._id': updatedSupplier._id },
+            { 'supplier.supplierID': updatedSupplier._id },
             {
                 $set: {
                     'supplier.name': updatedSupplier.name,
