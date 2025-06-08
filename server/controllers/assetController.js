@@ -1,6 +1,6 @@
 ﻿import mongoose from 'mongoose'
 import { AssetSchema } from "../models/assetModel.js";
-import { ApiResponse } from "../models/apiResponse.js";
+import { ApiResponse } from "../util/apiResponse.js";
 
 const Asset = mongoose.model('Assets', AssetSchema);
 

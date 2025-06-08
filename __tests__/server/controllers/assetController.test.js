@@ -320,7 +320,7 @@ describe('Asset Controller', () => {
         });
     });
 
-    describe('PUT /assets/:assetId', () => {
+    describe('PATCH /assets/:assetId', () => {
         let assetId;
 
         beforeEach(async () => {
@@ -348,7 +348,7 @@ describe('Asset Controller', () => {
         it('should update an existing asset', async () => {
             const update = {name: "Updated Asset Name"};
             const response = await request(app)
-                .put(`/assets/${assetId}`)
+                .patch(`/assets/${assetId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .send(update)
                 .expect(200);
@@ -360,7 +360,7 @@ describe('Asset Controller', () => {
         it('should return 404 if asset not found', async () => {
             const nonExistentId = new mongoose.Types.ObjectId();
             const response = await request(app)
-                .put(`/assets/${nonExistentId}`)
+                .patch(`/assets/${nonExistentId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({name: "Doesn't Matter"})
                 .expect(404);
@@ -377,7 +377,7 @@ describe('Asset Controller', () => {
             };
 
             const response = await request(app)
-                .put(`/assets/${assetId}`)
+                .patch(`/assets/${assetId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({name: "Error Asset"})
                 .expect(400); // <-- expect 400

@@ -2,7 +2,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { UserSchema } from "../models/userModel.js";
-import { ApiResponse } from "../models/apiResponse.js";
+import { ApiResponse } from "../util/apiResponse.js";
 import dotenv from "dotenv";
 
 dotenv.config();
