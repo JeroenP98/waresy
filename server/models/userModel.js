@@ -13,6 +13,9 @@ export const UserSchema = new Schema({
         type: String,
         required: 'Enter a last name',
     },
+    fullName: {
+        type: String,
+    },
     hashPassword: {
         type: String,
         required: 'Enter a password'
@@ -44,3 +47,9 @@ export const UserSchema = new Schema({
 UserSchema.methods.comparePassword = async function(password, HashPassword) {
     return bcrypt.compareSync(password, HashPassword);
 }
+
+// Combine first and last names into full name before saving
+UserSchema.pre('save', function (next) {
+    this.fullName = `${this.firstName} ${this.lastName}`;
+    next();
+});

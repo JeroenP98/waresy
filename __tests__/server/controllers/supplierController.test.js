@@ -4,12 +4,15 @@ import app from '../../../server/index.js';
 import { SupplierSchema } from '../../../server/models/supplierModel.js';
 import { AssetSchema } from '../../../server/models/assetModel.js';
 import {UserSchema} from "../../../server/models/userModel.js";
+import {AssetTypeSchema} from "../../../server/models/assetType.js";
 
 describe('Supplier Controller', () => {
 
     const Asset = mongoose.model('Assets', AssetSchema);
     const User = mongoose.model('Users', UserSchema)
     const Supplier = mongoose.model('Supplier', SupplierSchema);
+    const AssetType = mongoose.model('AssetTypes', AssetTypeSchema);
+
 
     let adminToken;
 
@@ -263,6 +266,7 @@ describe('Supplier Controller', () => {
     describe('PATCH /suppliers/:supplierId', () => {
         let authToken;
         let supplierId;
+        let validAssetType;
 
         beforeAll(async () => {
             const user = {
@@ -289,6 +293,8 @@ describe('Supplier Controller', () => {
                     contactEmail: 'original@supplier.com'
                 })
                 .expect(201);
+
+            validAssetType = await AssetType.create({ name: 'Peripheral' });
 
             supplierId = createRes.body.data._id;
         });
@@ -322,7 +328,10 @@ describe('Supplier Controller', () => {
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({
                     name: "Test Asset",
-                    assetType: { assetTypeID: "test-asset", name: "Peripheral" },
+                        assetType: {
+                            assetTypeID: validAssetType._id.toString(),
+                            name: "Peripheral"
+                        },
                     location: { locationID: "loc-001", name: "Main Office" },
                     serialNumber: "TEST-EMBED-001",
                     status: "Active",
@@ -399,6 +408,7 @@ describe('Supplier Controller', () => {
     describe('DELETE /suppliers/:supplierId', () => {
         let authToken;
         let supplierId;
+        let validAssetType;
 
         beforeAll(async () => {
             const user = {
@@ -425,7 +435,7 @@ describe('Supplier Controller', () => {
                     contactEmail: 'disposable@supplier.com'
                 })
                 .expect(201);
-
+            validAssetType = await AssetType.create({ name: 'Peripheral' });
             supplierId = createRes.body.data._id;
         });
 
@@ -486,7 +496,10 @@ describe('Supplier Controller', () => {
             // Step 2: Create an asset that embeds this supplier
             const assetPayload = {
                 name: "Asset With Embedded Supplier",
-                assetType: { assetTypeID: "sup-001", name: "Peripheral" },
+                assetType: {
+                    assetTypeID: validAssetType._id.toString(),
+                    name: "Peripheral"
+                },
                 location: { locationID: "sup-loc-001", name: "Support Room" },
                 serialNumber: "SUP-TEST-001",
                 status: "Active",
