@@ -35,7 +35,7 @@ const initializeApp = () => {
     })
 
     // Set up routes
-    routes(app)
+    routes(app);
     return app;
 };
 
