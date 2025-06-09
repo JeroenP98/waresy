@@ -23,6 +23,7 @@ const seedBaseTables = async () => {
         await User.deleteMany();
         await Asset.deleteMany();
         await Supplier.deleteMany();
+        await AssetType.deleteMany();
 
         // Add users
         const users = await User.insertMany([
