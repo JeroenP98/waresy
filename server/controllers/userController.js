@@ -26,6 +26,7 @@ export const registerUser = async (req, res) => {
         return ApiResponse.success(res, "User successfully registered", {
             firstName: user.firstName,
             lastName: user.lastName,
+            fullName: user.fullName,
             email: user.email,
         }, 201);
     } catch (e) {
@@ -51,7 +52,7 @@ export const loginUser = async (req, res) => {
 
         // All good, return token
         const token = jwt.sign(
-            { email: user.email, _id: user._id, role: user.role },
+            { email: user.email, _id: user._id, fullName: user.fullName, role: user.role },
             process.env.JWT_SECRET,
             { expiresIn: "1h" }
         );

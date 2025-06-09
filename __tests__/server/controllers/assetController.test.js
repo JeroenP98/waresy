@@ -3,6 +3,7 @@ import app from '../../../server/index.js';
 import mongoose from '../../../server/dbConnect.js'
 import {AssetSchema} from '../../../server/models/assetModel.js';
 import {UserSchema} from "../../../server/models/userModel.js";
+import {AssetTypeSchema} from "../../../server/models/assetType.js";
 
 
 // Create a test user and get JWT token before running tests
@@ -29,11 +30,11 @@ describe('Asset Controller', () => {
         }).expect(200);
 
         authToken = loginResponse.body.data.token;
-        console.log(`authToken: ${authToken}`); // Log the token for debugging
     });
 
     const Asset = mongoose.model('Assets', AssetSchema);
     const User = mongoose.model('Users', UserSchema)
+    const AssetType = mongoose.model('AssetTypes', AssetTypeSchema);
 
     afterAll(async () => {
         try {
@@ -48,12 +49,23 @@ describe('Asset Controller', () => {
     });
 
     describe('POST /assets', () => {
+        let validAssetType;
+
+        beforeEach(async () => {
+            // Insert valid asset type
+            validAssetType = await AssetType.create({ name: 'Peripheral' });
+        });
+
+        afterEach(async () => {
+            await Asset.deleteMany({});
+            await AssetType.deleteMany({});
+        });
 
         it('should save a new asset', async () => {
             const newAsset = {
                 name: "Logitech Mouse M330",
                 assetType: {
-                    assetTypeID: "mouse-001",
+                    assetTypeID: validAssetType._id.toString(),
                     name: "Peripheral"
                 },
                 location: {
@@ -77,7 +89,6 @@ describe('Asset Controller', () => {
                 .send(newAsset)
                 .expect(201);
 
-
             expect(response.body.success).toBe(true);
             expect(response.body.message).toMatch(/created/i);
             expect(response.body.data).toHaveProperty('serialNumber', "LOGI-M330-2024-03");
@@ -85,8 +96,11 @@ describe('Asset Controller', () => {
 
         it('should return 400 if required field is missing (e.g., Name)', async () => {
             const assetWithoutName = {
-                assetType: {assetTypeID: "001", name: "Peripheral"},
-                location: {locationID: "loc-001", name: "Office"},
+                assetType: {
+                    assetTypeID: validAssetType._id.toString(),
+                    name: "Peripheral"
+                },
+                location: { locationID: "loc-001", name: "Office" },
                 serialNumber: "SERIAL-001",
                 status: "Active",
                 supplier: {
@@ -109,8 +123,11 @@ describe('Asset Controller', () => {
         it('should return 400 for invalid status value', async () => {
             const invalidStatusAsset = {
                 name: "Asset with bad status",
-                assetType: {assetTypeID: "002", name: "Invalid"},
-                location: {locationID: "loc-002", name: "HQ"},
+                assetType: {
+                    assetTypeID: validAssetType._id.toString(),
+                    name: "Peripheral"
+                },
+                location: { locationID: "loc-002", name: "HQ" },
                 serialNumber: "INVALID-STATUS-001",
                 status: "Broken",
                 supplier: {
@@ -132,40 +149,45 @@ describe('Asset Controller', () => {
 
         it('should return 400 for duplicate SerialNumber', async () => {
             const duplicateAsset = {
-                name: "Asset with bad status",
-                assetType: {assetTypeID: "002", name: "Invalid"},
-                location: {locationID: "loc-002", name: "HQ"},
-                serialNumber: "INVALID-STATUS-001",
+                name: "Asset with duplicate serial",
+                assetType: {
+                    assetTypeID: validAssetType._id.toString(),
+                    name: "Peripheral"
+                },
+                location: { locationID: "loc-003", name: "Warehouse" },
+                serialNumber: "DUPLICATE-123",
                 status: "Active",
                 supplier: {
-                    supplierID: "supp-002",
-                    name: "Supplier X",
-                    contactEmail: "x@supplier.com"
+                    supplierID: "supp-003",
+                    name: "Supplier Z",
+                    contactEmail: "z@supplier.com"
                 }
             };
 
-            const original = await request(app)
+            await request(app)
                 .post('/assets')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send(duplicateAsset)
-                //.expect(201);
-            console.log('Original response:', original.body); // 👈
+                .expect(201);
 
             const response = await request(app)
                 .post('/assets')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send(duplicateAsset)
-                //.expect(400);
+                .expect(400);
 
-            //expect(response.body.success).toBe(false);
-            //expect(response.body.message).toMatch(/duplicate/i);
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toMatch(/duplicate/i);
         });
 
         it('should return 400 for invalid email in supplier', async () => {
             const invalidEmailAsset = {
                 name: "Bad email Asset",
-                assetType: {assetTypeID: "004", name: "Peripheral"},
-                location: {locationID: "loc-004", name: "Support"},
+                assetType: {
+                    assetTypeID: validAssetType._id.toString(),
+                    name: "Peripheral"
+                },
+                location: { locationID: "loc-004", name: "Support" },
                 serialNumber: "BAD-EMAIL-001",
                 status: "Active",
                 supplier: {
@@ -184,16 +206,29 @@ describe('Asset Controller', () => {
             expect(response.body.success).toBe(false);
             expect(response.body.message).toMatch(/not a valid email address/i);
         });
-
     });
 
+
     describe('GET /assets', () => {
+        let validAssetType;
+
+        beforeEach(async () => {
+            validAssetType = await AssetType.create({ name: 'Peripheral' });
+        });
+
+        afterEach(async () => {
+            await Asset.deleteMany({});
+            await AssetType.deleteMany({});
+        });
+
         it('should return all assets', async () => {
-            // Insert a test asset
             const assetData = {
                 name: "Test Asset GET",
-                assetType: {assetTypeID: "get-001", name: "Peripheral"},
-                location: {locationID: "get-loc-001", name: "Test Location"},
+                assetType: {
+                    assetTypeID: validAssetType._id.toString(),
+                    name: validAssetType.name
+                },
+                location: { locationID: "get-loc-001", name: "Test Location" },
                 serialNumber: "GET-TEST-001",
                 status: "Active",
                 supplier: {
@@ -202,10 +237,11 @@ describe('Asset Controller', () => {
                     contactEmail: "get@supplier.com"
                 }
             };
+
             await request(app)
                 .post('/assets')
-                .send(assetData)
                 .set('Authorization', `Bearer ${authToken}`)
+                .send(assetData)
                 .expect(201);
 
             const response = await request(app)
@@ -215,16 +251,14 @@ describe('Asset Controller', () => {
 
             expect(response.body.success).toBe(true);
             expect(Array.isArray(response.body.data)).toBe(true);
-            // At least one asset should be present
             expect(response.body.data.length).toBeGreaterThan(0);
-            // The asset we just added should be in the response
+
             const found = response.body.data.find(a => a.serialNumber === "GET-TEST-001");
             expect(found).toBeDefined();
             expect(found.name).toBe("Test Asset GET");
         });
 
         it('should return an empty array if no assets exist', async () => {
-            // Remove all assets
             await Asset.deleteMany({});
             const response = await request(app)
                 .get('/assets')
@@ -237,7 +271,6 @@ describe('Asset Controller', () => {
         });
 
         it('should handle database errors gracefully', async () => {
-            // Temporarily mock Asset.find to throw
             const originalFind = Asset.find;
             Asset.find = () => {
                 throw new Error('DB error');
@@ -246,24 +279,31 @@ describe('Asset Controller', () => {
             const response = await request(app)
                 .get('/assets')
                 .set('Authorization', `Bearer ${authToken}`)
-                .expect(400); // <-- expect 400
+                .expect(400);
 
             expect(response.body.success).toBe(false);
             expect(response.body.message).toMatch(/failed to retrieve assets/i);
 
-            // Restore original method
             Asset.find = originalFind;
         });
     });
 
     describe('GET /assets/:assetId', () => {
         let assetId;
+        let validAssetType;
 
         beforeEach(async () => {
+            // Create a valid AssetType
+            validAssetType = await AssetType.create({ name: 'Peripheral' });
+
+            // Create an asset using that type
             const asset = new Asset({
                 name: "Asset To Fetch",
-                assetType: {assetTypeID: "get-id-001", name: "Peripheral"},
-                location: {locationID: "get-loc-001", name: "Location A"},
+                assetType: {
+                    assetTypeID: validAssetType._id.toString(),
+                    name: validAssetType.name
+                },
+                location: { locationID: "get-loc-001", name: "Location A" },
                 serialNumber: "GET-ID-001",
                 status: "Active",
                 supplier: {
@@ -272,12 +312,14 @@ describe('Asset Controller', () => {
                     contactEmail: "getid@supplier.com"
                 }
             });
+
             const saved = await asset.save();
             assetId = saved._id;
         });
 
         afterEach(async () => {
             await Asset.deleteMany({});
+            await AssetType.deleteMany({});
         });
 
         it('should return a single asset by ID', async () => {
@@ -311,24 +353,35 @@ describe('Asset Controller', () => {
             const response = await request(app)
                 .get(`/assets/${assetId}`)
                 .set('Authorization', `Bearer ${authToken}`)
-                .expect(400); // <-- expect 400
+                .expect(400);
 
             expect(response.body.success).toBe(false);
             expect(response.body.message).toMatch(/failed to retrieve asset/i);
 
+            // Restore original method
             Asset.findById = original;
         });
     });
 
     describe('PATCH /assets/:assetId', () => {
         let assetId;
+        let validAssetType;
 
         beforeEach(async () => {
-            // Create an asset to update
+            // Create valid AssetType
+            validAssetType = await AssetType.create({ name: "Peripheral" });
+
+            // Create an asset using that type
             const asset = new Asset({
                 name: "Asset To Update",
-                assetType: {assetTypeID: "put-001", name: "Peripheral"},
-                location: {locationID: "put-loc-001", name: "Update Location"},
+                assetType: {
+                    assetTypeID: validAssetType._id.toString(),
+                    name: validAssetType.name
+                },
+                location: {
+                    locationID: "put-loc-001",
+                    name: "Update Location"
+                },
                 serialNumber: "PUT-TEST-001",
                 status: "Active",
                 supplier: {
@@ -343,10 +396,11 @@ describe('Asset Controller', () => {
 
         afterEach(async () => {
             await Asset.deleteMany({});
+            await AssetType.deleteMany({});
         });
 
         it('should update an existing asset', async () => {
-            const update = {name: "Updated Asset Name"};
+            const update = { name: "Updated Asset Name" };
             const response = await request(app)
                 .patch(`/assets/${assetId}`)
                 .set('Authorization', `Bearer ${authToken}`)
@@ -362,7 +416,7 @@ describe('Asset Controller', () => {
             const response = await request(app)
                 .patch(`/assets/${nonExistentId}`)
                 .set('Authorization', `Bearer ${authToken}`)
-                .send({name: "Doesn't Matter"})
+                .send({ name: "Doesn't Matter" })
                 .expect(404);
 
             expect(response.body.success).toBe(false);
@@ -373,31 +427,42 @@ describe('Asset Controller', () => {
             // Temporarily mock findByIdAndUpdate to throw
             const original = Asset.findByIdAndUpdate;
             Asset.findByIdAndUpdate = () => {
-                throw new Error('PUT DB error');
+                throw new Error('PATCH DB error');
             };
 
             const response = await request(app)
                 .patch(`/assets/${assetId}`)
                 .set('Authorization', `Bearer ${authToken}`)
-                .send({name: "Error Asset"})
-                .expect(400); // <-- expect 400
+                .send({ name: "Error Asset" })
+                .expect(400);
 
             expect(response.body.success).toBe(false);
             expect(response.body.message).toMatch(/failed to update asset/i);
 
+            // Restore original
             Asset.findByIdAndUpdate = original;
         });
     });
 
     describe('DELETE /assets/:assetId', () => {
         let assetId;
+        let validAssetType;
 
         beforeEach(async () => {
-            // Create an asset to delete
+            // Create a valid asset type
+            validAssetType = await AssetType.create({ name: "Peripheral" });
+
+            // Create an asset to delete using that type
             const asset = new Asset({
                 name: "Asset To Delete",
-                assetType: {assetTypeID: "del-001", name: "Peripheral"},
-                location: {locationID: "del-loc-001", name: "Delete Location"},
+                assetType: {
+                    assetTypeID: validAssetType._id.toString(),
+                    name: validAssetType.name
+                },
+                location: {
+                    locationID: "del-loc-001",
+                    name: "Delete Location"
+                },
                 serialNumber: "DEL-TEST-001",
                 status: "Active",
                 supplier: {
@@ -406,12 +471,14 @@ describe('Asset Controller', () => {
                     contactEmail: "del@supplier.com"
                 }
             });
+
             const saved = await asset.save();
             assetId = saved._id;
         });
 
         afterEach(async () => {
             await Asset.deleteMany({});
+            await AssetType.deleteMany({});
         });
 
         it('should delete an existing asset', async () => {
@@ -436,7 +503,6 @@ describe('Asset Controller', () => {
         });
 
         it('should handle errors gracefully', async () => {
-            // Temporarily mock findByIdAndDelete to throw
             const original = Asset.findByIdAndDelete;
             Asset.findByIdAndDelete = () => {
                 throw new Error('DELETE DB error');
@@ -445,12 +511,14 @@ describe('Asset Controller', () => {
             const response = await request(app)
                 .delete(`/assets/${assetId}`)
                 .set('Authorization', `Bearer ${authToken}`)
-                .expect(400); // <-- expect 400
+                .expect(400);
 
             expect(response.body.success).toBe(false);
             expect(response.body.message).toMatch(/failed to delete asset/i);
 
+            // Restore the original method
             Asset.findByIdAndDelete = original;
         });
     });
+
 });

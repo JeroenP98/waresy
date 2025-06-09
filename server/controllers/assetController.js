@@ -1,11 +1,20 @@
 ﻿import mongoose from 'mongoose'
 import { AssetSchema } from "../models/assetModel.js";
 import { ApiResponse } from "../util/apiResponse.js";
+import {AssetTypeSchema} from "../models/assetType.js";
 
 const Asset = mongoose.model('Assets', AssetSchema);
+const AssetType = mongoose.model('AssetType', AssetTypeSchema);
 
 export const addNewAsset = async (req, res) => {
     try {
+        const { assetType } = req.body;
+
+        const existingType = await AssetType.findById(assetType.assetTypeID);
+        if (!existingType) {
+            return ApiResponse.error(res, 'Asset type not found', 404);
+        }
+
         const newAsset = new Asset(req.body);
         const asset = await newAsset.save();
         return ApiResponse.success(res, 'Asset successfully created', asset, 201);
