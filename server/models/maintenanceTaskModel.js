@@ -135,8 +135,8 @@ MaintenanceTaskSchema.pre('save', async function (next) {
             updatedAt: new Date(),
             updatedBy: {
                 userID: this.assignedTo?.userID || 'system',
-                firstName: this.assignedTo?.firstName || 'System',
-                lastName: this.assignedTo?.lastName || '',
+                fullName: `${this.assignedTo?.firstName || 'System'} ${this.assignedTo?.lastName || ''}`.trim(),
+                email: this.assignedTo?.email || 'system@example.com',
             }
         });
     }
