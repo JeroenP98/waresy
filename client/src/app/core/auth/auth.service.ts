@@ -5,6 +5,7 @@ import {environment} from '../../../environments/environment';
 import {LoginResponseModel} from './models/login-response-model';
 import {jwtDecode} from 'jwt-decode';
 import {catchError, map, Observable, of} from 'rxjs';
+import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -12,10 +13,18 @@ import {catchError, map, Observable, of} from 'rxjs';
 export class AuthService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
+  private router = inject(Router);
 
   currentUser = signal<UserInterface | null>(null);
 
-  constructor() { }
+  constructor() {
+    const token = this.getToken();
+
+    if (token) {
+      const user = this.decodeTokenToUser(token);
+      this.currentUser.set(user);
+    }
+  }
 
   login(email: string, password: string): Observable<{ success: boolean; error?: string }> {
     return this.http
@@ -56,5 +65,11 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
+  logout() {
+    // unset token
+    localStorage.removeItem('token');
+    // reset current user
+    this.currentUser.set(null);
+  }
 
 }

@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {AuthService} from '../../auth.service';
 import {Router} from '@angular/router';
@@ -13,12 +13,19 @@ import {NgIf} from '@angular/common';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
   email = '';
   password = '';
   errorMessage: string | null = null;
+
+  ngOnInit() {
+    // If the user is already logged in, redirect to home
+    if (this.authService.currentUser() && this.authService.getToken()) {
+      this.router.navigate(['/']);
+    }
+  }
 
 
   onSubmit() {
