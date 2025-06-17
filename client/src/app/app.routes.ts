@@ -3,6 +3,7 @@ import {LayoutComponent} from './core/layout/layout.component';
 import {DashboardComponent} from './features/dashboard/dashboard/dashboard.component';
 import {LoginComponent} from './core/auth/pages/login/login.component';
 import {AuthGuard} from './core/auth/guards/auth.guard';
+import {SuppliersComponent} from './features/suppliers/pages/suppliers/suppliers.component';
 
 export const routes: Routes = [
   {
@@ -11,7 +12,7 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: '', component: DashboardComponent },
-      //{ path: 'assets', component: AssetComponent },
+      { path: 'suppliers', component: SuppliersComponent },
     ]
   },
   {
