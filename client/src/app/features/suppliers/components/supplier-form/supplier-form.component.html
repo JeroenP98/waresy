@@ -1,0 +1,29 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col flex-1 space-y-4">
+  <div class="space-y-4">
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Name</legend>
+      <input type="text" class="input" placeholder="Type here" formControlName="name"/>
+      <div *ngIf="form.get('name')?.invalid && form.get('name')?.touched" class="text-error text-sm mt-1">
+        <span *ngIf="form.get('name')?.errors?.['required']">Name is required.</span>
+      </div>
+    </fieldset>
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Email</legend>
+      <input type="email" class="input" placeholder="Type here" formControlName="contactEmail" />
+      <div *ngIf="form.get('contactEmail')?.invalid && form.get('contactEmail')?.touched" class="text-error text-sm mt-1">
+        <span *ngIf="form.get('contactEmail')?.errors?.['required']">Email is required.</span>
+        <span *ngIf="form.get('contactEmail')?.errors?.['email']">Must be a valid email address.</span>
+      </div>
+    </fieldset>
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Phone</legend>
+      <input type="text" class="input" placeholder="Type here" formControlName="phone"/>
+    </fieldset>
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Website</legend>
+      <input type="url" class="input" placeholder="Type here" formControlName="website"/>
+    </fieldset>
+  </div>
+
+  <button class="btn btn-primary w-full mt-auto" type="submit" [disabled]="form.invalid">Submit</button>
+</form>

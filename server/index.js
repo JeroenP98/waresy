@@ -4,11 +4,17 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import jsonwebtoken from "jsonwebtoken";
 import routes from "./routes/index.js";
+import cors from 'cors';
 
 const initializeApp = () => {
     dotenv.config();
 
     const app = express();
+
+    app.use(cors({
+        origin: 'http://localhost:4200',
+        credentials: true,
+    }))
 
     // Mongoose connection
     mongoose.Promise = global.Promise;

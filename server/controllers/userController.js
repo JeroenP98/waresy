@@ -52,9 +52,8 @@ export const loginUser = async (req, res) => {
 
         // All good, return token
         const token = jwt.sign(
-            { email: user.email, _id: user._id, fullName: user.fullName, role: user.role },
-            process.env.JWT_SECRET,
-            { expiresIn: "1h" }
+            { email: user.email, _id: user._id, fullName: user.fullName, firstName: user.firstName,  role: user.role },
+            process.env.JWT_SECRET
         );
 
         return ApiResponse.success(res, "User successfully logged in", { token }, 200);

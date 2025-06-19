@@ -1,0 +1,13 @@
+<div class="drawer lg:drawer-open">
+  <input id="sidebar-drawer" type="checkbox" class="drawer-toggle" />
+
+  <div class="drawer-content flex flex-col">
+    <main class="p-6">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+
+  <div class="drawer-side p-4">
+    <app-sidebar></app-sidebar>
+  </div>
+</div>
