@@ -1,0 +1,23 @@
+<div class="drawer drawer-end">
+  <input id="add-asset-drawer" type="checkbox" class="drawer-toggle" [checked]="drawerOpen" />
+  <div class="drawer-content">
+    <div class="bg-base-200 rounded-box shadow p-6">
+      <app-assets-table
+        [assets]="assets"
+        (add)="openDrawer()"
+        (delete)="handleDelete($event)"
+        (updateStatus)="handleStatusUpdate($event)">
+      </app-assets-table>
+    </div>
+  </div>
+  <div class="drawer-side">
+    <label for="add-asset-drawer" aria-label="close sidebar" class="drawer-overlay" (click)="closeDrawer()"></label>
+    <!-- Drawer side panel content -->
+    <div class="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+      <app-assets-form class="flex-1 flex flex-col" (submitAsset)="handleFormSubmit($event)" [suppliers]="suppliers" [assetTypes]="assetTypes"></app-assets-form>
+    </div>
+  </div>
+</div>
+
+
+
