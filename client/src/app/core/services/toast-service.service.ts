@@ -22,5 +22,7 @@ export class ToastService {
       wrapper.classList.add('animate-fade-out');
       setTimeout(() => container.removeChild(wrapper), 500);
     }, 3000);
+
+    console.log(`ToastService: ${message} (${type})`);
   }
 }
