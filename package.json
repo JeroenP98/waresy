@@ -5,7 +5,7 @@
   "main": "server/server.js",
   "scripts": {
     "start": "nodemon server/server.js --exec ts-node",
-    "test": "cross-env MONGODB_URI=mongodb://127.0.0.1:27017/waresy_test node --experimental-vm-modules node_modules/jest/bin/jest.js --collectCoverage --forceExit --detectOpenHandles"
+    "test": "cross-env MONGODB_URI=mongodb://127.0.0.1:27017/waresy_test node --experimental-vm-modules node_modules/jest/bin/jest.js --collectCoverage --forceExit --detectOpenHandles --testPathPattern=/__tests__/.*"
   },
   "jest": {
     "transform": {}
