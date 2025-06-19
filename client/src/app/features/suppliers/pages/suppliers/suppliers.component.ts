@@ -4,6 +4,7 @@ import {Supplier} from '../../../../shared/models/supplier';
 import {SupplierService} from '../../services/supplier.service';
 import {SupplierFormComponent} from '../../components/supplier-form/supplier-form.component';
 import {CreateSupplierDto} from '../../../../shared/models/create-supplier-dto';
+import {ToastService} from '../../../../core/services/toast-service.service';
 
 @Component({
   selector: 'app-suppliers',
@@ -13,6 +14,7 @@ import {CreateSupplierDto} from '../../../../shared/models/create-supplier-dto';
 })
 export class SuppliersComponent implements OnInit {
   private supplierService = inject(SupplierService);
+  private toastService = inject(ToastService);
   suppliers: Supplier[] = [];
 
   drawerOpen = false;
@@ -41,8 +43,9 @@ export class SuppliersComponent implements OnInit {
 
   handleDelete(supplier: Supplier) {
     if (!confirm(`Are you sure you want to delete "${supplier.name}"?`)) return;
-    this.supplierService.deleteSupplier(supplier._id).subscribe(() => {
+    this.supplierService.deleteSupplier(supplier._id).subscribe(deleted => {
       this.fetchSuppliers(); // refresh the list
+      this.toastService.show(`"${deleted.name}" was deleted successfully.`, 'success');
     });
   }
 
