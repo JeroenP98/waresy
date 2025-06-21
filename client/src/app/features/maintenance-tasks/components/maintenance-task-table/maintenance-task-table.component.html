@@ -1,0 +1,71 @@
+<div class="flex flex-wrap justify-between items-center mb-4 gap-4">
+  <input
+    type="text"
+    class="input input-bordered w-full max-w-xs"
+    placeholder="Search tasks..."
+    [(ngModel)]="searchTerm"
+    (ngModelChange)="onSearchChange()" />
+
+  <div class="flex gap-2">
+    <button
+      class="btn btn-error"
+      [disabled]="!selectedTask"
+      (click)="onDeleteMaintenanceTask()">
+      Delete
+    </button>
+    <button class="btn btn-outline" (click)="exportToJson()">
+      Export
+    </button>
+    <button class="btn btn-primary" (click)="onAddMaintenanceTask()">
+      + Add Task
+    </button>
+  </div>
+</div>
+
+<div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+  <table class="table table-zebra w-full">
+    <thead>
+    <tr>
+      <th>Task Name</th>
+      <th>Status</th>
+      <th>Assigned To</th>
+      <th>Contractor</th>
+      <th>Planned Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr
+      *ngFor="let task of filteredTasks"
+      (click)="selectMaintenanceTask(task)"
+      class="cursor-pointer"
+      [ngClass]="{
+          '!bg-accent !text-accent-content': selectedTask?._id === task._id
+        }"
+    >
+      <td>{{ task.taskName }}</td>
+      <td>
+        <ng-container *ngIf="selectedTask?._id === task._id; else badge">
+          <select
+            class="select select-xs select-bordered"
+            [ngModel]="task.status"
+            (ngModelChange)="onStatusChange(task, $event)"
+            (click)="$event.stopPropagation()"
+          >
+            <option *ngFor="let status of statusOptions" [value]="status">
+              {{ status }}
+            </option>
+          </select>
+        </ng-container>
+        <ng-template #badge>
+            <span class="badge" [ngClass]="getStatusClass(task.status)">
+              {{ task.status }}
+            </span>
+        </ng-template>
+      </td>
+      <td>{{ task.assignedTo?.firstName }} {{ task.assignedTo?.lastName }}</td>
+      <td>{{ task.contractor?.name }}</td>
+      <td>{{ task.plannedDate | date: 'shortDate' }}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

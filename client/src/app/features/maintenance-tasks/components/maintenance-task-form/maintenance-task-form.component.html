@@ -1,0 +1,51 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col flex-1 space-y-4">
+
+  <!-- Description -->
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">Description</legend>
+    <textarea class="textarea" placeholder="Enter task description" formControlName="description"></textarea>
+  </fieldset>
+
+
+  <!-- Assigned To -->
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">Assigned To</legend>
+    <select class="select w-full" formControlName="assignedTo">
+      <option [value]="null">Select a user</option>
+      <option *ngFor="let user of users" [ngValue]="user">
+        {{ user.firstName }} {{ user.lastName }}
+      </option>
+    </select>
+  </fieldset>
+
+  <!-- Contractor -->
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">Contractor</legend>
+    <select class="select w-full" formControlName="contractor">
+      <option [value]="null">Select a supplier</option>
+      <option *ngFor="let supplier of suppliers" [ngValue]="supplier">
+        {{ supplier.name }}
+      </option>
+    </select>
+  </fieldset>
+
+  <!-- Planned Date -->
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">Planned Date</legend>
+    <input type="date" class="input" formControlName="plannedDate" />
+  </fieldset>
+
+
+  <!-- Asset Selection -->
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">Assets</legend>
+    <div class="flex flex-col gap-2 max-h-48 overflow-y-auto">
+
+    </div>
+  </fieldset>
+
+  <!-- Submit -->
+  <button type="submit" class="btn btn-primary mt-auto w-full" [disabled]="form.invalid">
+    Submit
+  </button>
+</form>

@@ -8,6 +8,9 @@ import {AssetTypeComponent} from './features/asset-types/pages/asset-type/asset-
 import {AssetsComponent} from './features/assets/pages/assets/assets.component';
 import {UsersComponent} from './features/users/pages/users/users.component';
 import {AdminGuard} from './core/auth/guards/admin.guard';
+import {
+  MaintenanceTasksComponent
+} from './features/maintenance-tasks/pages/maintenance-tasks/maintenance-tasks.component';
 
 export const routes: Routes = [
   {
@@ -19,6 +22,7 @@ export const routes: Routes = [
       { path: 'suppliers', component: SuppliersComponent },
       { path: 'asset-types', component: AssetTypeComponent},
       { path: 'assets', component: AssetsComponent},
+      { path: 'maintenance-tasks', component: MaintenanceTasksComponent},
       { path: 'users', component: UsersComponent, canActivate: [AdminGuard]}
     ]
   },
