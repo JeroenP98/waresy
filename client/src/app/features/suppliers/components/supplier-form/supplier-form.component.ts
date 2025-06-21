@@ -27,7 +27,6 @@ export class SupplierFormComponent {
   onSubmit() {
     if (this.form.valid) {
       this.submitSupplier.emit(this.form.value);
-      console.log(this.form.value);
     }
   }
 }

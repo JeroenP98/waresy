@@ -1,0 +1,47 @@
+<div class="flex flex-wrap justify-between items-center mb-4 gap-4">
+  <input
+    type="text"
+    class="input input-bordered w-full max-w-xs"
+    placeholder="Search suppliers..."
+    [(ngModel)]="searchTerm"
+    (ngModelChange)="onSearchChange()" />
+
+  <div class="flex gap-2">
+    <button
+      class="btn btn-error"
+      [disabled]="!selectedAssetType"
+      (click)="onDeleteAssetType()">
+      Delete
+    </button>
+    <button class="btn btn-outline" (click)="exportToCSV()">
+      Export
+    </button>
+    <button class="btn btn-primary" (click)="onAddAssetType()">
+      + Add Asset type
+    </button>
+  </div>
+</div>
+
+<div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+  <table class="table w-full table-zebra">
+    <thead>
+    <tr>
+      <th>Name</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr
+      *ngFor="let assetType of filteredAssetTypes"
+      (click)="selectAssetType(assetType)"
+      class="cursor-pointer"
+      [ngClass]="{
+    '!bg-accent !text-accent-content': selectedAssetType?._id === assetType._id
+  }">
+
+      <td>{{ assetType.name }}</td>
+
+    </tr>
+    </tbody>
+  </table>
+</div>
+

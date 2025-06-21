@@ -1,0 +1,76 @@
+<div class="flex flex-wrap justify-between items-center mb-4 gap-4">
+  <input
+    type="text"
+    class="input input-bordered w-full max-w-xs"
+    placeholder="Search assets..."
+    [(ngModel)]="searchTerm"
+    (ngModelChange)="onSearchChange()" />
+
+  <div class="flex gap-2">
+    <button
+      class="btn btn-error"
+      [disabled]="!selectedAsset"
+      (click)="onDeleteAsset()">
+      Delete
+    </button>
+    <button class="btn btn-outline" (click)="exportToJson()">
+      Export
+    </button>
+    <button class="btn btn-primary" (click)="onAddAsset()">
+      + Add Asset
+    </button>
+  </div>
+</div>
+
+<div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+  <table class="table w-full table-zebra">
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Serial Number</th>
+      <th>Status</th>
+      <th>Supplier</th>
+      <th>Asset Type</th>
+      <th>Location</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr
+      *ngFor="let asset of filteredAssets"
+      (click)="selectAsset(asset)"
+      class="cursor-pointer"
+      [ngClass]="{
+          '!bg-accent !text-accent-content': selectedAsset?._id === asset._id
+        }"
+    >
+      <td>{{ asset.name }}</td>
+      <td>{{ asset.serialNumber }}</td>
+      <!-- Status dropdown or badge -->
+      <td>
+        <ng-container *ngIf="selectedAsset?._id === asset._id; else statusBadge">
+          <select
+            class="select select-xs select-bordered"
+            [ngModel]="asset.status"
+            (ngModelChange)="onStatusChange(asset, $event)"
+            (click)="$event.stopPropagation()"
+          >
+            <option *ngFor="let status of statusOptions" [value]="status">
+              {{ status }}
+            </option>
+          </select>
+        </ng-container>
+
+        <ng-template #statusBadge>
+          <span class="badge" [ngClass]="getStatusClass(asset.status)">
+            {{ asset.status }}
+          </span>
+        </ng-template>
+      </td>
+
+      <td>{{ asset.supplier?.name }}</td>
+      <td>{{ asset.assetType?.name }}</td>
+      <td>{{ asset.location?.name }}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

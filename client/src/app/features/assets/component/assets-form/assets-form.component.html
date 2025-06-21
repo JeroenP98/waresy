@@ -1,0 +1,65 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col flex-1 space-y-4">
+  <div class="space-y-4">
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Asset Name</legend>
+      <input type="text" class="input" placeholder="Type here" formControlName="name" />
+      <div *ngIf="form.get('name')?.invalid && form.get('name')?.touched" class="text-error text-sm mt-1">
+        <span *ngIf="form.get('name')?.errors?.['required']">Name is required.</span>
+      </div>
+    </fieldset>
+
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Serial Number</legend>
+      <input type="text" class="input" placeholder="Type here" formControlName="serialNumber" />
+      <div *ngIf="form.get('serialNumber')?.invalid && form.get('serialNumber')?.touched" class="text-error text-sm mt-1">
+        <span *ngIf="form.get('serialNumber')?.errors?.['required']">Serial number is required.</span>
+      </div>
+    </fieldset>
+
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Status</legend>
+      <select class="select w-full" formControlName="status">
+        <option [ngValue]="null" disabled selected>Select status</option>
+        <option *ngFor="let status of statusOptions" [ngValue]="status">
+          {{ status }}
+        </option>
+      </select>
+      <div *ngIf="form.get('status')?.invalid && form.get('status')?.touched" class="text-error text-sm mt-1">
+        <span>Status is required.</span>
+      </div>
+    </fieldset>
+
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Asset Type</legend>
+      <select class="select w-full" formControlName="assetType">
+        <option [ngValue]="null" disabled selected>Select asset type</option>
+        <option *ngFor="let type of assetTypes" [ngValue]="type">{{ type.name }}</option>
+      </select>
+      <div *ngIf="form.get('assetType')?.invalid && form.get('assetType')?.touched" class="text-error text-sm mt-1">
+        <span>Asset type is required.</span>
+      </div>
+    </fieldset>
+
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Supplier</legend>
+      <select class="select w-full" formControlName="supplier">
+        <option [ngValue]="null" disabled selected>Select supplier</option>
+        <option *ngFor="let supplier of suppliers" [ngValue]="supplier">{{ supplier.name }}</option>
+      </select>
+      <div *ngIf="form.get('supplier')?.invalid && form.get('supplier')?.touched" class="text-error text-sm mt-1">
+        <span>Supplier is required.</span>
+      </div>
+    </fieldset>
+
+    <div formGroupName="location">
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Location</legend>
+        <input type="text" class="input" placeholder="Type here" formControlName="name"/>
+      </fieldset>
+    </div>
+
+  </div>
+
+  <button class="btn btn-primary w-full mt-auto" type="submit" [disabled]="form.invalid">Submit</button>
+</form>
+

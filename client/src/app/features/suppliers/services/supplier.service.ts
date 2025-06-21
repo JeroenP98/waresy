@@ -13,7 +13,7 @@ export class SupplierService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
 
-  constructor() { }
+
 
   getSuppliers(): Observable<Supplier[]> {
     return this.http
