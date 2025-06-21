@@ -2,9 +2,9 @@ import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../../../environments/environment';
 import {map, Observable} from 'rxjs';
-import {Asset} from '../../../shared/models/asset';
-import {AssetApiResponse} from '../../../shared/models/asset-api-response';
-import {CreateAssetDto} from '../../../shared/models/create-asset-dto';
+import {Asset} from '../../../shared/models/assets/asset';
+import {AssetApiResponse} from '../../../shared/models/assets/asset-api-response';
+import {CreateAssetDto} from '../../../shared/models/assets/create-asset-dto';
 
 @Injectable({
   providedIn: 'root'

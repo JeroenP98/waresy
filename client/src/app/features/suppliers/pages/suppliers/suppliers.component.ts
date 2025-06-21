@@ -1,9 +1,9 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {SupplierTableComponent} from '../../components/supplier-table/supplier-table.component';
-import {Supplier} from '../../../../shared/models/supplier';
+import {Supplier} from '../../../../shared/models/suppliers/supplier';
 import {SupplierService} from '../../services/supplier.service';
 import {SupplierFormComponent} from '../../components/supplier-form/supplier-form.component';
-import {CreateSupplierDto} from '../../../../shared/models/create-supplier-dto';
+import {CreateSupplierDto} from '../../../../shared/models/suppliers/create-supplier-dto';
 import {ToastService} from '../../../../core/services/toast-service.service';
 
 @Component({

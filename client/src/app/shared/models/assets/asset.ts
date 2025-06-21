@@ -1,7 +1,8 @@
-﻿import {AssetType} from './asset-type';
-import {Supplier} from './supplier';
+﻿import {AssetType} from '../asset-types/asset-type';
+import {Supplier} from '../suppliers/supplier';
 
-export interface CreateAssetDto {
+export interface Asset {
+  _id: string,
   name: string,
   serialNumber: string,
   status: string,
@@ -20,4 +21,6 @@ export interface CreateAssetDto {
     phone: string,
     website: string,
   }
+  createdAt: Date,
+  updatedAt: Date,
 }

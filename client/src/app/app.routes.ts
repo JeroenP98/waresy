@@ -6,6 +6,8 @@ import {AuthGuard} from './core/auth/guards/auth.guard';
 import {SuppliersComponent} from './features/suppliers/pages/suppliers/suppliers.component';
 import {AssetTypeComponent} from './features/asset-types/pages/asset-type/asset-type.component';
 import {AssetsComponent} from './features/assets/pages/assets/assets.component';
+import {UsersComponent} from './features/users/pages/users/users.component';
+import {AdminGuard} from './core/auth/guards/admin.guard';
 
 export const routes: Routes = [
   {
@@ -16,7 +18,8 @@ export const routes: Routes = [
       { path: '', component: DashboardComponent },
       { path: 'suppliers', component: SuppliersComponent },
       { path: 'asset-types', component: AssetTypeComponent},
-      { path: 'assets', component: AssetsComponent}
+      { path: 'assets', component: AssetsComponent},
+      { path: 'users', component: UsersComponent, canActivate: [AdminGuard]}
     ]
   },
   {

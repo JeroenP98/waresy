@@ -2,9 +2,9 @@ import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../../../environments/environment';
 import {map, Observable} from 'rxjs';
-import { Supplier } from '../../../shared/models/supplier';
-import {SupplierApiResponse} from '../../../shared/models/supplier-api-response';
-import {CreateSupplierDto} from '../../../shared/models/create-supplier-dto';
+import { Supplier } from '../../../shared/models/suppliers/supplier';
+import {SupplierApiResponse} from '../../../shared/models/suppliers/supplier-api-response';
+import {CreateSupplierDto} from '../../../shared/models/suppliers/create-supplier-dto';
 
 @Injectable({
   providedIn: 'root'

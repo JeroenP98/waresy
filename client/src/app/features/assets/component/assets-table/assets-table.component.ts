@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {Asset} from '../../../../shared/models/asset';
+import {Asset} from '../../../../shared/models/assets/asset';
 import {FormsModule} from '@angular/forms';
 import {CommonModule, NgClass, NgForOf} from '@angular/common';
 

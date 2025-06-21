@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {Supplier} from '../../../../shared/models/supplier';
+import {Supplier} from '../../../../shared/models/suppliers/supplier';
 import {NgClass, NgForOf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import { mkConfig, generateCsv, download } from "export-to-csv";

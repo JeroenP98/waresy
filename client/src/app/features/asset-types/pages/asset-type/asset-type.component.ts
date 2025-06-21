@@ -1,8 +1,8 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {ToastService} from '../../../../core/services/toast-service.service';
-import {AssetType} from '../../../../shared/models/asset-type';
+import {AssetType} from '../../../../shared/models/asset-types/asset-type';
 import {AssetTypeService} from '../../services/asset-type.service';
-import {CreateAssetTypeDto} from '../../../../shared/models/create-asset-type-dto';
+import {CreateAssetTypeDto} from '../../../../shared/models/asset-types/create-asset-type-dto';
 import {AssetTypeTableComponent} from '../../components/asset-type-table/asset-type-table.component';
 import {AssetTypeFormComponent} from '../../components/asset-type-form/asset-type-form.component';
 
