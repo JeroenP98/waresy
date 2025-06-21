@@ -16,7 +16,7 @@ import {Asset} from '../../../../shared/models/asset';
     AssetsFormComponent
   ],
   templateUrl: './assets.component.html',
-  styleUrl: './assets.component.css'
+  styleUrls: ['./assets.component.css']
 })
 export class AssetsComponent implements OnInit {
 
