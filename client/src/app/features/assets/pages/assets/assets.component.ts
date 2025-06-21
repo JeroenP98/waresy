@@ -3,11 +3,11 @@ import {AssetsTableComponent} from '../../component/assets-table/assets-table.co
 import {AssetsFormComponent} from '../../component/assets-form/assets-form.component';
 import {SupplierService} from '../../../suppliers/services/supplier.service';
 import {ToastService} from '../../../../core/services/toast-service.service';
-import {Supplier} from '../../../../shared/models/supplier';
+import {Supplier} from '../../../../shared/models/suppliers/supplier';
 import {AssetTypeService} from '../../../asset-types/services/asset-type.service';
 import {AssetService} from '../../services/asset.service';
-import {AssetType} from '../../../../shared/models/asset-type';
-import {Asset} from '../../../../shared/models/asset';
+import {AssetType} from '../../../../shared/models/asset-types/asset-type';
+import {Asset} from '../../../../shared/models/assets/asset';
 
 @Component({
   selector: 'app-assets',

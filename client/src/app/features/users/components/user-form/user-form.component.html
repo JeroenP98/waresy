@@ -1,0 +1,64 @@
+<form [formGroup]="from" (ngSubmit)="onSubmit()" class="flex flex-col flex-1 space-y-4">
+  <div class="space-y-4">
+
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">First Name</legend>
+      <input type="text" class="input" formControlName="firstName" placeholder="Enter first name" />
+      <div *ngIf="from.get('firstName')?.invalid && from.get('firstName')?.touched" class="text-error text-sm mt-1">
+        <span>First name is required.</span>
+      </div>
+    </fieldset>
+
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Last Name</legend>
+      <input type="text" class="input" formControlName="lastName" placeholder="Enter last name" />
+      <div *ngIf="from.get('lastName')?.invalid && from.get('lastName')?.touched" class="text-error text-sm mt-1">
+        <span>Last name is required.</span>
+      </div>
+    </fieldset>
+
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Email</legend>
+      <input type="email" class="input" formControlName="email" placeholder="email@example.com" />
+      <div *ngIf="from.get('email')?.invalid && from.get('email')?.touched" class="text-error text-sm mt-1">
+        <span>Email is required.</span>
+      </div>
+    </fieldset>
+
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Role</legend>
+      <select class="select w-full" formControlName="role">
+        <option [ngValue]="null" disabled selected>Select a role</option>
+        <option value="Admin">Admin</option>
+        <option value="User">User</option>
+      </select>
+      <div *ngIf="from.get('role')?.invalid && from.get('role')?.touched" class="text-error text-sm mt-1">
+        <span>Role is required.</span>
+      </div>
+    </fieldset>
+
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Password</legend>
+      <input type="password" class="input" formControlName="password" placeholder="Enter password" />
+      <div *ngIf="from.get('password')?.invalid && from.get('password')?.touched" class="text-error text-sm mt-1">
+        <span>Password is required.</span>
+      </div>
+    </fieldset>
+
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Confirm Password</legend>
+      <input type="password" class="input" formControlName="confirmPassword" placeholder="Repeat password" />
+      <div *ngIf="from.get('confirmPassword')?.invalid && from.get('confirmPassword')?.touched" class="text-error text-sm mt-1">
+        <span>Confirmation is required.</span>
+      </div>
+      <div *ngIf="from.value.password !== from.value.confirmPassword && from.get('confirmPassword')?.touched" class="text-error text-sm mt-1">
+        <span>Passwords do not match.</span>
+      </div>
+    </fieldset>
+
+  </div>
+
+  <button class="btn btn-primary w-full mt-auto" type="submit" [disabled]="from.invalid || from.value.password !== from.value.confirmPassword">
+    Submit
+  </button>
+</form>

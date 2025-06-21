@@ -1,11 +1,11 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../../../environments/environment';
-import {AssetType} from '../../../shared/models/asset-type';
+import {AssetType} from '../../../shared/models/asset-types/asset-type';
 import {map, Observable} from 'rxjs';
-import {AssetTypeApiResponse} from '../../../shared/models/asset-type-api-response';
-import {CreateAssetTypeDto} from '../../../shared/models/create-asset-type-dto';
-import {Supplier} from '../../../shared/models/supplier';
+import {AssetTypeApiResponse} from '../../../shared/models/asset-types/asset-type-api-response';
+import {CreateAssetTypeDto} from '../../../shared/models/asset-types/create-asset-type-dto';
+import {Supplier} from '../../../shared/models/suppliers/supplier';
 
 @Injectable({
   providedIn: 'root'

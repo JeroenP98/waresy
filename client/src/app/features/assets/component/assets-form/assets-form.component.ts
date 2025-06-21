@@ -1,9 +1,9 @@
 import {Component, EventEmitter, inject, Input, Output} from '@angular/core';
 import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {AssetType} from '../../../../shared/models/asset-type';
-import {Supplier} from '../../../../shared/models/supplier';
+import {AssetType} from '../../../../shared/models/asset-types/asset-type';
+import {Supplier} from '../../../../shared/models/suppliers/supplier';
 import {NgForOf, NgIf} from '@angular/common';
-import {CreateAssetDto} from '../../../../shared/models/create-asset-dto';
+import {CreateAssetDto} from '../../../../shared/models/assets/create-asset-dto';
 
 @Component({
   selector: 'app-assets-form',

@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {AssetType} from '../../../../shared/models/asset-type';
+import {AssetType} from '../../../../shared/models/asset-types/asset-type';
 import {download, generateCsv, mkConfig} from 'export-to-csv';
 import {NgClass, NgForOf} from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
