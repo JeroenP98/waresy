@@ -1,16 +1,20 @@
 import {Component, EventEmitter, inject, Input, Output} from '@angular/core';
 import {Asset} from '../../../../shared/models/assets/asset';
 import {Supplier} from '../../../../shared/models/suppliers/supplier';
-import {FormBuilder, FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CreateMaintenanceTaskDto} from '../../../../shared/models/maintenance-tasks/create-maintenance-task-dto';
 import {User} from '../../../../shared/models/users/user';
-import {NgForOf} from '@angular/common';
+import {NgForOf, NgIf} from '@angular/common';
+import {MultiSelect} from 'primeng/multiselect';
+import {dateValidator} from './dateValidator';
 
 @Component({
   selector: 'app-maintenance-task-form',
   imports: [
     ReactiveFormsModule,
-    NgForOf
+    NgForOf,
+    MultiSelect,
+    NgIf
   ],
   templateUrl: './maintenance-task-form.component.html',
   styleUrl: './maintenance-task-form.component.css'
@@ -30,17 +34,18 @@ export class MaintenanceTaskFormComponent {
     status: ['Pending', Validators.required],
     assignedTo: [null, Validators.required],
     contractor: [null, Validators.required],
-    plannedDate: ['', Validators.required],
+    plannedDate: ['', [Validators.required, dateValidator()]],
     performedDate: [''],
+    assets: [[], Validators.required]
   });
 
-  selectedAssets = new FormControl([])
 
   onSubmit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
+
 
     const raw = this.form.value as unknown as MaintenanceTaskFormValue;
     if (!raw.assignedTo || !raw.contractor) return;
@@ -62,9 +67,17 @@ export class MaintenanceTaskFormComponent {
         name: raw.contractor.name,
         contactEmail: raw.contractor.contactEmail
       },
-      assets: []
+      assets: raw.assets.map(asset => {
+        return {
+          assetID: asset._id,
+          assetName: asset.name,
+          assetType: {
+            assetTypeID: asset.assetType.assetTypeID,
+            name: asset.assetType.name
+          }
+        };
+      })
     };
-
     this.submitTask.emit(dto);
   }
 
@@ -87,7 +100,7 @@ type MaintenanceTaskFormValue = {
     contactEmail: string;
   } | null;
   plannedDate: string; // changed from Date
-  selectedAssets: {
+  assets: {
     _id: string;
     name: string;
     assetType: {
@@ -98,4 +111,3 @@ type MaintenanceTaskFormValue = {
 
 
 };
-

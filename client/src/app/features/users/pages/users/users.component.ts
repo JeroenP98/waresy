@@ -3,16 +3,12 @@ import {ToastService} from '../../../../core/services/toast-service.service';
 import {UserService} from '../../services/user.service';
 import {User} from '../../../../shared/models/users/user';
 import {CreateUserDto} from '../../../../shared/models/users/create-user-dto';
-import {SupplierFormComponent} from '../../../suppliers/components/supplier-form/supplier-form.component';
-import {SupplierTableComponent} from '../../../suppliers/components/supplier-table/supplier-table.component';
 import {UserFormComponent} from '../../components/user-form/user-form.component';
 import {UsersTableComponent} from '../../components/users-table/users-table.component';
 
 @Component({
   selector: 'app-users',
   imports: [
-    SupplierFormComponent,
-    SupplierTableComponent,
     UserFormComponent,
     UsersTableComponent
   ],

@@ -51,7 +51,7 @@
             (ngModelChange)="onStatusChange(task, $event)"
             (click)="$event.stopPropagation()"
           >
-            <option *ngFor="let status of statusOptions" [value]="status">
+            <option *ngFor="let status of statusOptions" [value]="status" class="text-white">
               {{ status }}
             </option>
           </select>

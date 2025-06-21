@@ -45,10 +45,18 @@ export class AssetTypeComponent implements OnInit {
 
   handleDelete(assetType: AssetType) {
     if (!confirm(`Are you sure you want to delete "${assetType.name}"?`)) return;
-    this.assetTypeService.deleteAssetType(assetType._id).subscribe(deleted => {
-      this.fetchAssetTypes(); // refresh the list
-      this.toastService.show(`"${assetType.name}" was deleted successfully.`, 'success');
-    })
+
+    this.assetTypeService.deleteAssetType(assetType._id).subscribe({
+      next: () => {
+        this.fetchAssetTypes(); // refresh the list
+        this.toastService.show(`"${assetType.name}" was deleted successfully.`, 'success');
+      },
+      error: err => {
+        const errorMessage =
+          err?.error?.message || `Failed to delete "${assetType.name}".`;
+        this.toastService.show(errorMessage, 'error');
+      }
+    });
   }
 
   private fetchAssetTypes() {

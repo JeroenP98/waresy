@@ -125,8 +125,21 @@ MaintenanceTaskSchema.pre('save', async function (next) {
     const Model = mongoose.model('MaintenanceTask', MaintenanceTaskSchema);
 
     if (!this.taskName) {
-        const count = await Model.countDocuments();
-        this.taskName = `T-${(count + 1).toString().padStart(3, '0')}`;
+        // Find the task with the highest taskName number
+        const latestTask = await Model
+            .findOne({ taskName: /^T-\d{3}$/ })
+            .sort({ taskName: -1 })
+            .lean();
+
+        let nextNumber = 1;
+        if (latestTask?.taskName) {
+            const match = latestTask.taskName.match(/^T-(\d{3})$/);
+            if (match) {
+                nextNumber = parseInt(match[1], 10) + 1;
+            }
+        }
+
+        this.taskName = `T-${nextNumber.toString().padStart(3, '0')}`;
     }
 
     if (this.isNew) {

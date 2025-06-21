@@ -3,7 +3,7 @@
   <!-- Description -->
   <fieldset class="fieldset">
     <legend class="fieldset-legend">Description</legend>
-    <textarea class="textarea" placeholder="Enter task description" formControlName="description"></textarea>
+    <textarea class="textarea w-full" placeholder="Enter task description" formControlName="description"></textarea>
   </fieldset>
 
 
@@ -32,16 +32,17 @@
   <!-- Planned Date -->
   <fieldset class="fieldset">
     <legend class="fieldset-legend">Planned Date</legend>
-    <input type="date" class="input" formControlName="plannedDate" />
+    <input type="date" class="input w-full" formControlName="plannedDate" />
+    <div *ngIf="form.get('plannedDate')?.errors?.['pastDate'] && form.get('plannedDate')?.touched" class="text-error text-sm mt-1">
+      Planned date cannot be in the past.
+    </div>
   </fieldset>
 
 
   <!-- Asset Selection -->
   <fieldset class="fieldset">
     <legend class="fieldset-legend">Assets</legend>
-    <div class="flex flex-col gap-2 max-h-48 overflow-y-auto">
-
-    </div>
+    <p-multiselect [options]="assets" formControlName="assets" optionLabel="name" placeholder="Select Assets" [maxSelectedLabels]="2" styleClass="w-full md:w-80" class="w-full"></p-multiselect>
   </fieldset>
 
   <!-- Submit -->

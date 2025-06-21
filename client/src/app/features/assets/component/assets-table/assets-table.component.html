@@ -36,7 +36,7 @@
     </thead>
     <tbody>
     <tr
-      *ngFor="let asset of filteredAssets"
+      *ngFor="let asset of paginatedAssets"
       (click)="selectAsset(asset)"
       class="cursor-pointer"
       [ngClass]="{
@@ -54,7 +54,7 @@
             (ngModelChange)="onStatusChange(asset, $event)"
             (click)="$event.stopPropagation()"
           >
-            <option *ngFor="let status of statusOptions" [value]="status">
+            <option *ngFor="let status of statusOptions" [value]="status" class="text-white">
               {{ status }}
             </option>
           </select>
@@ -73,4 +73,9 @@
     </tr>
     </tbody>
   </table>
+  <div class="flex justify-center items-center mt-4 join">
+    <button class="join-item btn " (click)="currentPage = currentPage - 1" [disabled]="currentPage === 1">Previous</button>
+    <span class="join-item btn">Page {{ currentPage }} of {{ totalPages }}</span>
+    <button class="join-item btn " (click)="currentPage = currentPage + 1" [disabled]="currentPage === totalPages">Next</button>
+  </div>
 </div>
