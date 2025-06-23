@@ -30,7 +30,16 @@
       <th>Status</th>
       <th>Assigned To</th>
       <th>Contractor</th>
-      <th>Planned Date</th>
+      <th (click)="sortByPlannedDate()" class="cursor-pointer select-none">
+        Planned Date
+        <span class="ml-1">
+          <ng-container [ngSwitch]="sortDirection">
+            <span *ngSwitchCase="'asc'">▲</span>
+            <span *ngSwitchCase="'desc'">▼</span>
+            <span *ngSwitchDefault class="text-gray-400">⇅</span>
+          </ng-container>
+        </span>
+      </th>
     </tr>
     </thead>
     <tbody>
@@ -64,7 +73,7 @@
       </td>
       <td>{{ task.assignedTo?.firstName }} {{ task.assignedTo?.lastName }}</td>
       <td>{{ task.contractor?.name }}</td>
-      <td>{{ task.plannedDate | date: 'shortDate' }}</td>
+      <td>{{ task.plannedDate | date: 'dd-MM-yyyy' }}</td>
     </tr>
     </tbody>
   </table>

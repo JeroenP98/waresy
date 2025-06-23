@@ -19,6 +19,7 @@ export class AssetsTableComponent {
   @Output() add = new EventEmitter<Asset>();
   @Output() delete = new EventEmitter<any>();
   @Output() updateStatus = new EventEmitter<{ assetId: string; status: string }>();
+  @Output() createTaskFromAsset = new EventEmitter<Asset>();
 
   filteredAssets: Array<Asset> = [];
   searchTerm: string = '';
@@ -49,6 +50,12 @@ export class AssetsTableComponent {
       this.selectedAsset = null; // unselect
     } else {
       this.selectedAsset = asset;
+    }
+  }
+
+  onCreateTask() {
+    if (this.selectedAsset) {
+      this.createTaskFromAsset.emit(this.selectedAsset);
     }
   }
 

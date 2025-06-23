@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {MaintenanceTask} from '../../../../shared/models/maintenance-tasks/maintenance-task';
-import {DatePipe, NgClass, NgForOf, NgIf} from '@angular/common';
+import {DatePipe, NgClass, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 
 @Component({
@@ -10,7 +10,10 @@ import {FormsModule} from '@angular/forms';
     NgClass,
     FormsModule,
     NgIf,
-    NgForOf
+    NgForOf,
+    NgSwitch,
+    NgSwitchCase,
+    NgSwitchDefault
   ],
   templateUrl: './maintenance-task-table.component.html',
   styleUrl: './maintenance-task-table.component.css'
@@ -96,5 +99,21 @@ export class MaintenanceTaskTableComponent {
     }
   }
 
+  sortDirection: 'asc' | 'desc' | null = null;
+
+  sortByPlannedDate() {
+    if (this.sortDirection === 'asc') {
+      this.sortDirection = 'desc';
+    } else {
+      this.sortDirection = 'asc';
+    }
+
+    this.filteredTasks.sort((a, b) => {
+      const dateA = new Date(a.plannedDate).getTime();
+      const dateB = new Date(b.plannedDate).getTime();
+
+      return this.sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
+    });
+  }
 
 }

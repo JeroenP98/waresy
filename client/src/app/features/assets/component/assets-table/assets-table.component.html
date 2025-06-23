@@ -6,7 +6,14 @@
     [(ngModel)]="searchTerm"
     (ngModelChange)="onSearchChange()" />
 
+
   <div class="flex gap-2">
+    <button
+      class="btn btn-primary"
+      [disabled]="!selectedAsset"
+      (click)="onCreateTask()">
+      + Create Maintenance Tasks
+    </button>
     <button
       class="btn btn-error"
       [disabled]="!selectedAsset"
