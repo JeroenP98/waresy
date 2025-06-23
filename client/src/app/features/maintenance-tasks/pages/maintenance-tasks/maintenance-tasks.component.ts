@@ -132,4 +132,24 @@ export class MaintenanceTasksComponent {
       }
     });
   }
+
+  handleFinalizeTask($event: { report: string; performedDate: string, taskId: string }) {
+    this.maintenanceTaskService.updateMaintenanceTask($event.taskId, {
+      status: 'Completed',
+      finalReport: $event.report,
+      performedDate: new Date($event.performedDate)
+    }).subscribe(updatedTask => {
+      this.toastService.show('Task finalized successfully.', 'success');
+      // Update the task in the list
+      const index = this.maintenanceTasks.findIndex(t => t._id === updatedTask._id);
+      if (index !== -1) this.maintenanceTasks[index] = updatedTask;
+
+      // Also update selectedTask’s status and history
+      if (this.selectedTask && this.selectedTask._id === updatedTask._id) {
+        this.selectedTask.status = updatedTask.status;
+        this.selectedTask.finalReport = updatedTask.finalReport;
+        this.selectedTask.performedDate = updatedTask.performedDate;
+      }
+    });
+  }
 }

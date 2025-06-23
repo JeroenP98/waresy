@@ -1,7 +1,9 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, inject, Input, Output} from '@angular/core';
 import {MaintenanceTask} from '../../../../shared/models/maintenance-tasks/maintenance-task';
 import {DatePipe, NgClass, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault} from '@angular/common';
 import {FormsModule} from '@angular/forms';
+import {FinalizeMaintenanceTaskComponent} from '../finalize-maintenance-task/finalize-maintenance-task.component';
+import {AuthService} from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-maintenance-task-table',
@@ -13,7 +15,8 @@ import {FormsModule} from '@angular/forms';
     NgForOf,
     NgSwitch,
     NgSwitchCase,
-    NgSwitchDefault
+    NgSwitchDefault,
+    FinalizeMaintenanceTaskComponent
   ],
   templateUrl: './maintenance-task-table.component.html',
   styleUrl: './maintenance-task-table.component.css'
@@ -24,11 +27,24 @@ export class MaintenanceTaskTableComponent {
   @Output() delete = new EventEmitter<any>();
   @Output() updateStatus = new EventEmitter<{ taskId: string; status: string }>();
   @Output() selectTask = new EventEmitter<MaintenanceTask>();
+  @Output() finalizeTask = new EventEmitter<{
+    taskId: string;
+    report: string;
+    performedDate: string;
+  }>();
+
+  private authService = inject(AuthService);
 
   filteredTasks: Array<MaintenanceTask> = [];
   searchTerm: string = '';
   selectedTask: MaintenanceTask | null = null;
-  statusOptions: string[] = ['Pending', 'In Progress', 'Completed', 'Cancelled'];
+  statusOptions: string[] = ['Pending', 'In Progress', 'Cancelled'];
+  get canFinalizeTask(): boolean {
+    return this.selectedTask != null &&
+      this.selectedTask.assignedTo.userID === this.authService.getUser()?.id &&
+      this.selectedTask.status !== 'Completed' &&
+      this.selectedTask.status !== 'Cancelled';
+  }
 
   onStatusChange(task: MaintenanceTask, newStatus: string) {
     if (task.status !== newStatus) {
@@ -114,6 +130,40 @@ export class MaintenanceTaskTableComponent {
 
       return this.sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
     });
+  }
+
+  selectedTaskToFinalize: MaintenanceTask | null = null;
+  openFinalizeModal(task: MaintenanceTask | null) {
+    if (!task) return;
+    this.selectedTaskToFinalize = task;
+  }
+
+  submitFinalReport(data: { report: string; performedDate: string }) {
+    if (!this.selectedTaskToFinalize) return;
+
+    const taskId = this.selectedTaskToFinalize._id;
+
+    this.finalizeTask.emit({
+      taskId,
+      report: data.report,
+      performedDate: data.performedDate
+    });
+
+    this.selectedTaskToFinalize = null;
+  }
+
+  closeFinalizeModal() {
+    this.selectedTaskToFinalize = null;
+  }
+
+  selectedReportTask: MaintenanceTask | null = null;
+
+  openReportModal(task: MaintenanceTask) {
+    this.selectedReportTask = task;
+  }
+
+  closeReportModal() {
+    this.selectedReportTask = null;
   }
 
 }

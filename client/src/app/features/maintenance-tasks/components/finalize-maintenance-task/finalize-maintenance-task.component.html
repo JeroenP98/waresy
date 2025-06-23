@@ -1,0 +1,42 @@
+<dialog *ngIf="task" open class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg">Finalize Task {{ task.taskName }}</h3>
+
+    <!-- Final Report -->
+    <p class="py-2">Provide a final maintenance report:</p>
+    <textarea class="textarea w-full"
+              [formControl]="finalReportControl"
+              placeholder="e.g. Replaced filter, tested system..."></textarea>
+
+    <!-- Performed Date -->
+    <div class="mt-4">
+      <label class="label">
+        <span class="label-text">Performed Date</span>
+      </label>
+
+      <!-- Planned Date Hint -->
+      <p class="text-xs text-gray-500 mb-1">
+        Planned date: {{ task?.plannedDate | date: 'dd-MM-yyyy' }}
+      </p>
+
+      <input type="date" class="input w-full" [formControl]="performedDateControl" />
+
+      <div *ngIf="performedDateControl.errors?.['beforePlanned'] && performedDateControl.touched"
+           class="text-error text-sm mt-1">
+        Performed date cannot be before the planned date ({{ task?.plannedDate | date:'dd-MM-yyyy' }}).
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="modal-action">
+      <form method="dialog" class="flex gap-2">
+        <button class="btn" type="button" (click)="onCancel()">Cancel</button>
+        <button class="btn btn-primary"
+                [disabled]="finalReportControl.invalid || performedDateControl.invalid"
+                (click)="onSubmit()">
+          Submit
+        </button>
+      </form>
+    </div>
+  </div>
+</dialog>

@@ -11,7 +11,7 @@ import {AuthService} from '../../../auth/auth.service';
 export class SidebarComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
-  currentUser = this.authService.currentUser;
+  currentUser = this.authService.getUser();
 
   logout() {
     this.authService.logout();

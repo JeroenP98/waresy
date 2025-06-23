@@ -80,7 +80,7 @@
   <!-- Bottom profile section -->
   <div class="pt-4 border-t border-base-300 mt-4 space-y-2">
     <p class="text-sm font-medium px-2">
-      {{ currentUser()?.fullName || 'Unknown User' }}
+      {{ currentUser?.fullName || 'Unknown User' }}
     </p>
     <button class="btn btn-soft btn-error btn-sm w-full" (click)="logout()">
       Logout

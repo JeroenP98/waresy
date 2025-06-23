@@ -32,5 +32,7 @@ export interface MaintenanceTask {
       fullName: string,
       email: string
     }
-  }]
+  }],
+  finalReport?: string;
+
 }

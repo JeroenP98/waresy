@@ -15,7 +15,7 @@ export class AuthService {
   private apiUrl = environment.apiUrl;
   private router = inject(Router);
 
-  currentUser = signal<UserInterface | null>(null);
+  private currentUser = signal<UserInterface | null>(null);
 
   constructor() {
     const token = this.getToken();
@@ -70,6 +70,10 @@ export class AuthService {
     localStorage.removeItem('token');
     // reset current user
     this.currentUser.set(null);
+  }
+
+  getUser(): UserInterface | null {
+    return this.currentUser();
   }
 
 }

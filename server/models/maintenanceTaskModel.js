@@ -114,7 +114,10 @@ export const MaintenanceTaskSchema = new Schema({
                 }
             }
         }
-    }]
+    }],
+    finalReport: {
+        type: String
+    }
 }, {
     timestamps: true,
 })

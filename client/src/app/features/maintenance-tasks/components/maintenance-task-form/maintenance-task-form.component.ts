@@ -6,7 +6,7 @@ import {CreateMaintenanceTaskDto} from '../../../../shared/models/maintenance-ta
 import {User} from '../../../../shared/models/users/user';
 import {NgForOf, NgIf} from '@angular/common';
 import {MultiSelect} from 'primeng/multiselect';
-import {dateValidator} from './dateValidator';
+import {dateValidator} from '../../validators/dateValidator';
 
 @Component({
   selector: 'app-maintenance-task-form',

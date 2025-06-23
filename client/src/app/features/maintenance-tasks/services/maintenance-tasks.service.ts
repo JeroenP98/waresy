@@ -89,4 +89,19 @@ export class MaintenanceTasksService {
         })
       );
   }
+
+  updateMaintenanceTask(taskId: string, update: Partial<MaintenanceTask>): Observable<MaintenanceTask> {
+    return this.http
+      .patch<{ success: boolean; message: string; data: MaintenanceTask }>(
+        `${this.apiUrl}/maintenance-tasks/${taskId}`,
+        update
+      )
+      .pipe(
+        map(res => {
+          if (!res.success) throw new Error(res.message || 'Failed to update maintenance task');
+          return res.data;
+        })
+      );
+  }
+
 }
