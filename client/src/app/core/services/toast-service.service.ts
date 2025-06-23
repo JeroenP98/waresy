@@ -11,9 +11,7 @@ export class ToastService {
     const wrapper = document.createElement('div');
     wrapper.className = `alert alert-${type} shadow-lg animate-fade-in`;
     wrapper.innerHTML = `
-      <div>
         <span>${message}</span>
-      </div>
     `;
 
     container.appendChild(wrapper);

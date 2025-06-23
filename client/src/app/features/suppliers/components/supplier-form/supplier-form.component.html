@@ -1,14 +1,14 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col flex-1 space-y-4">
   <div class="space-y-4">
     <fieldset class="fieldset">
-      <legend class="fieldset-legend">Name</legend>
+      <legend class="fieldset-legend">Name<span class="text-error">*</span></legend>
       <input type="text" class="input" placeholder="Type here" formControlName="name"/>
       <div *ngIf="form.get('name')?.invalid && form.get('name')?.touched" class="text-error text-sm mt-1">
         <span *ngIf="form.get('name')?.errors?.['required']">Name is required.</span>
       </div>
     </fieldset>
     <fieldset class="fieldset">
-      <legend class="fieldset-legend">Email</legend>
+      <legend class="fieldset-legend">Email<span class="text-error">*</span></legend>
       <input type="email" class="input" placeholder="Type here" formControlName="contactEmail" />
       <div *ngIf="form.get('contactEmail')?.invalid && form.get('contactEmail')?.touched" class="text-error text-sm mt-1">
         <span *ngIf="form.get('contactEmail')?.errors?.['required']">Email is required.</span>
@@ -16,11 +16,11 @@
       </div>
     </fieldset>
     <fieldset class="fieldset">
-      <legend class="fieldset-legend">Phone</legend>
+      <legend class="fieldset-legend">Phone<span class="text-error">*</span></legend>
       <input type="text" class="input" placeholder="Type here" formControlName="phone"/>
     </fieldset>
     <fieldset class="fieldset">
-      <legend class="fieldset-legend">Website</legend>
+      <legend class="fieldset-legend">Website<span class="text-error">*</span></legend>
       <input type="url" class="input" placeholder="Type here" formControlName="website"/>
     </fieldset>
   </div>

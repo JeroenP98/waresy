@@ -1,0 +1,18 @@
+<table class="table table-zebra w-full text-sm">
+  <thead>
+  <tr>
+    <th>Asset Name</th>
+    <th>Asset Type</th>
+
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let asset of assets">
+    <td>{{ asset.assetName }}</td>
+    <td>{{ asset.assetType?.name }}</td>
+  </tr>
+  <tr *ngIf="!assets.length">
+    <td colspan="3" class="text-center italic text-gray-500">No assets linked to this task.</td>
+  </tr>
+  </tbody>
+</table>

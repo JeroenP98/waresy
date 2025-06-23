@@ -25,6 +25,19 @@ export class AssetsTableComponent {
   selectedAsset: Asset | null = null;
   statusOptions: string[] = ['Active', 'Inactive', 'Maintenance', 'Retired'];
 
+  currentPage = 1;
+  itemsPerPage = 20;
+
+  get paginatedAssets(): Asset[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    return this.filteredAssets.slice(start, end);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredAssets.length / this.itemsPerPage);
+  }
+
   onStatusChange(asset: Asset, newStatus: string) {
     if (asset.status !== newStatus) {
       this.updateStatus.emit({ assetId: asset._id, status: newStatus });

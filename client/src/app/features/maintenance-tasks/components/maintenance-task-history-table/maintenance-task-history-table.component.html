@@ -1,0 +1,26 @@
+<table class="table table-zebra w-full text-sm">
+  <thead>
+  <tr>
+    <th>Status</th>
+    <th>Updated At</th>
+    <th>Updated By</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let entry of history">
+    <td>
+        <span class="badge text-xs whitespace-nowrap" [ngClass]="getStatusClass(entry.status)">
+          {{ entry.status }}
+        </span>
+    </td>
+    <td>{{ entry.updatedAt | date: 'short' }}</td>
+    <td>
+      <div class="font-medium">{{ entry.updatedBy?.fullName }}</div>
+      <div class="text-xs text-gray-500">{{ entry.updatedBy?.email }}</div>
+    </td>
+  </tr>
+  <tr *ngIf="!history.length">
+    <td colspan="3" class="text-center italic text-gray-500">No status history available.</td>
+  </tr>
+  </tbody>
+</table>
