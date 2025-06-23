@@ -8,12 +8,23 @@ import {AssetTypeService} from '../../../asset-types/services/asset-type.service
 import {AssetService} from '../../services/asset.service';
 import {AssetType} from '../../../../shared/models/asset-types/asset-type';
 import {Asset} from '../../../../shared/models/assets/asset';
+import {NgSwitch, NgSwitchCase} from '@angular/common';
+import {
+  MaintenanceTaskFormComponent
+} from '../../../maintenance-tasks/components/maintenance-task-form/maintenance-task-form.component';
+import {User} from '../../../../shared/models/users/user';
+import {UserService} from '../../../users/services/user.service';
+import {CreateMaintenanceTaskDto} from '../../../../shared/models/maintenance-tasks/create-maintenance-task-dto';
+import {MaintenanceTasksService} from '../../../maintenance-tasks/services/maintenance-tasks.service';
 
 @Component({
   selector: 'app-assets',
   imports: [
     AssetsTableComponent,
-    AssetsFormComponent
+    AssetsFormComponent,
+    NgSwitch,
+    NgSwitchCase,
+    MaintenanceTaskFormComponent
   ],
   templateUrl: './assets.component.html',
   styleUrls: ['./assets.component.css']
@@ -22,14 +33,19 @@ export class AssetsComponent implements OnInit {
 
   private supplierService = inject(SupplierService);
   private assetTypesService = inject(AssetTypeService);
+  private userService = inject(UserService);
   private assetService = inject(AssetService);
   private toastService = inject(ToastService);
+  private maintenanceTaskService = inject(MaintenanceTasksService);
   suppliers: Supplier[] = [];
   assets: Asset[] = [];
+  users: User[] = [];
   assetTypes: AssetType[] = [];
 
 
   drawerOpen = false;
+  drawerMode: 'asset' | 'task' | null = null;
+  selectedAssetForTask: Asset | null = null;
 
   ngOnInit(): void {
     this.fetchAll()
@@ -48,6 +64,13 @@ export class AssetsComponent implements OnInit {
     this.fetchAssets();
     this.fetchSuppliers();
     this.fetchAssetTypes();
+    this.fetchUsers();
+  }
+
+  private fetchUsers() {
+    this.userService.getUsers().subscribe(users => {
+      this.users = users;
+    });
   }
 
   private fetchAssets() {
@@ -112,4 +135,21 @@ export class AssetsComponent implements OnInit {
   }
 
 
+  handleSubmitMaintenanceTask(maintenanceTask: CreateMaintenanceTaskDto) {
+    this.maintenanceTaskService.postMaintenanceTask(maintenanceTask).subscribe({
+      next: (response) => {
+        this.toastService.show(`Maintenance task ${response.taskName} created successfully`, 'success');
+        this.closeDrawer();
+      },
+      error: (error) => {
+        this.toastService.show('Failed to create maintenance task: ' + error.message, 'error');
+      }
+    })
+  }
+
+  handleCreateTaskFromAsset(asset: Asset) {
+    this.selectedAssetForTask = asset;
+    this.drawerMode = 'task';
+    this.drawerOpen = true;
+  }
 }

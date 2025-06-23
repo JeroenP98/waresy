@@ -19,6 +19,6 @@ router.get('/auth/user', loginRequired, getUserByEmail);
 router.patch('/auth/user/:email', loginRequired, updateUser);
 router.delete('/auth/user/:email', loginRequired, isAdmin, deleteUser);
 
-router.get('/auth/users', loginRequired, isAdmin, getAllUsers);
+router.get('/auth/users', loginRequired, getAllUsers);
 
 export default router;

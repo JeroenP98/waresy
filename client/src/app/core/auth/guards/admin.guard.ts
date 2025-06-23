@@ -11,7 +11,7 @@ export class AdminGuard implements CanActivate {
   private toastService = inject(ToastService);
   private router = inject(Router);
   canActivate(): boolean {
-    if (this.authService.currentUser()?.role === 'Admin') {
+    if (this.authService.getUser()?.role === 'Admin') {
         return true;
     } else {
         this.router.navigate(['/']);

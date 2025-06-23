@@ -1,4 +1,4 @@
-import {Component, EventEmitter, inject, Input, Output} from '@angular/core';
+import {Component, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
 import {Asset} from '../../../../shared/models/assets/asset';
 import {Supplier} from '../../../../shared/models/suppliers/supplier';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
@@ -6,10 +6,11 @@ import {CreateMaintenanceTaskDto} from '../../../../shared/models/maintenance-ta
 import {User} from '../../../../shared/models/users/user';
 import {NgForOf, NgIf} from '@angular/common';
 import {MultiSelect} from 'primeng/multiselect';
-import {dateValidator} from './dateValidator';
+import {dateValidator} from '../../validators/dateValidator';
 
 @Component({
   selector: 'app-maintenance-task-form',
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     NgForOf,
@@ -19,11 +20,13 @@ import {dateValidator} from './dateValidator';
   templateUrl: './maintenance-task-form.component.html',
   styleUrl: './maintenance-task-form.component.css'
 })
-export class MaintenanceTaskFormComponent {
+export class MaintenanceTaskFormComponent implements OnInit {
+
   @Output() submitTask = new EventEmitter<CreateMaintenanceTaskDto>();
   @Input() suppliers: Supplier[] = [];
   @Input() users: User[] = [];
   @Input() assets: Asset[] = [];
+  @Input() formGroupAssetPreselect: Asset | null = null;
 
   fb = inject(FormBuilder);
 
@@ -36,9 +39,14 @@ export class MaintenanceTaskFormComponent {
     contractor: [null, Validators.required],
     plannedDate: ['', [Validators.required, dateValidator()]],
     performedDate: [''],
-    assets: [[], Validators.required]
+    assets: this.fb.control<Asset[]>([], Validators.required)
   });
 
+  ngOnInit(): void {
+    if (this.formGroupAssetPreselect) {
+      this.form.get('assets')?.setValue([this.formGroupAssetPreselect]);
+    }
+  }
 
   onSubmit() {
     if (this.form.invalid) {

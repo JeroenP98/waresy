@@ -15,8 +15,8 @@
     </td>
     <td>{{ entry.updatedAt | date: 'short' }}</td>
     <td>
-      <div class="font-medium">{{ entry.updatedBy?.fullName }}</div>
-      <div class="text-xs text-gray-500">{{ entry.updatedBy?.email }}</div>
+      <div class="font-medium">{{ entry.updatedBy.fullName }}</div>
+      <div class="text-xs text-gray-500">{{ entry.updatedBy.email }}</div>
     </td>
   </tr>
   <tr *ngIf="!history.length">

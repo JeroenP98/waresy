@@ -503,16 +503,6 @@ describe('User Controller', () => {
             });
         });
 
-        it('should deny access to non-admin users', async () => {
-            const response = await request(app)
-                .get('/auth/users')
-                .set('Authorization', `Bearer ${userToken}`)
-                .expect(403);
-
-            expect(response.body.success).toBe(false);
-            expect(response.body.message).toMatch(/access denied/i);
-        });
-
         it('should return 401 if no token is provided', async () => {
             const response = await request(app)
                 .get('/auth/users')

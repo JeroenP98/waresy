@@ -177,7 +177,7 @@ describe('Asset Controller', () => {
                 .expect(400);
 
             expect(response.body.success).toBe(false);
-            expect(response.body.message).toMatch(/duplicate/i);
+            expect(response.body.message).toMatch(/already exists/i);
         });
 
         it('should return 400 for invalid email in supplier', async () => {

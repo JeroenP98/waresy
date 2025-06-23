@@ -1,3 +1,25 @@
+<!-- Finaliz maintenance task modal -->
+<app-finalize-maintenance-task
+  [task]="selectedTaskToFinalize"
+  (submit)="submitFinalReport($event)"
+  (cancel)="closeFinalizeModal()">
+</app-finalize-maintenance-task>
+<!-- Modal for viewing final report -->
+<dialog *ngIf="selectedReportTask?.finalReport" open class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg">Final Report for {{ selectedReportTask?.taskName }}</h3>
+    <p class="text-sm text-gray-500 mb-2">
+      Performed on: {{ selectedReportTask?.performedDate | date: 'dd-MM-yyyy' }}
+    </p>
+    <p class="py-4 whitespace-pre-line">{{ selectedReportTask?.finalReport }}</p>
+
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn" (click)="closeReportModal()">Close</button>
+      </form>
+    </div>
+  </div>
+</dialog>
 <div class="flex flex-wrap justify-between items-center mb-4 gap-4">
   <input
     type="text"
@@ -8,8 +30,12 @@
 
   <div class="flex gap-2">
     <button
+      class="btn btn-primary"
+      [disabled]="!canFinalizeTask"
+      (click)="openFinalizeModal(selectedTask)">Finalize task</button>
+    <button
       class="btn btn-error"
-      [disabled]="!selectedTask"
+      [disabled]="!selectedTask || selectedTask.status == 'Completed'"
       (click)="onDeleteMaintenanceTask()">
       Delete
     </button>
@@ -30,7 +56,18 @@
       <th>Status</th>
       <th>Assigned To</th>
       <th>Contractor</th>
-      <th>Planned Date</th>
+      <th (click)="sortByPlannedDate()" class="cursor-pointer select-none">
+        Planned Date
+        <span class="ml-1">
+          <ng-container [ngSwitch]="sortDirection">
+            <span *ngSwitchCase="'asc'">▲</span>
+            <span *ngSwitchCase="'desc'">▼</span>
+            <span *ngSwitchDefault class="text-gray-400">⇅</span>
+          </ng-container>
+        </span>
+      </th>
+      <th>Performed Date</th>
+      <th><!-- View Report button --></th>
     </tr>
     </thead>
     <tbody>
@@ -62,9 +99,20 @@
             </span>
         </ng-template>
       </td>
-      <td>{{ task.assignedTo?.firstName }} {{ task.assignedTo?.lastName }}</td>
-      <td>{{ task.contractor?.name }}</td>
-      <td>{{ task.plannedDate | date: 'shortDate' }}</td>
+      <td>{{ task.assignedTo.firstName }} {{ task.assignedTo.lastName }}</td>
+      <td>{{ task.contractor.name }}</td>
+      <td>{{ task.plannedDate | date: 'dd-MM-yyyy' }}</td>
+      <td>{{ task.performedDate ? (task.performedDate | date: 'dd-MM-yyyy') : '—' }}</td>
+      <!-- View Report button -->
+      <td>
+
+        <button
+          *ngIf="task.finalReport && task.status === 'Completed'"
+          class="btn btn-xs btn-outline btn-info"
+          (click)="openReportModal(task); $event.stopPropagation()">
+          View Report
+        </button>
+      </td>
     </tr>
     </tbody>
   </table>

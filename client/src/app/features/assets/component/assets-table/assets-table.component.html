@@ -6,7 +6,14 @@
     [(ngModel)]="searchTerm"
     (ngModelChange)="onSearchChange()" />
 
+
   <div class="flex gap-2">
+    <button
+      class="btn btn-primary"
+      [disabled]="!selectedAsset"
+      (click)="onCreateTask()">
+      + Create Maintenance Tasks
+    </button>
     <button
       class="btn btn-error"
       [disabled]="!selectedAsset"
@@ -67,9 +74,9 @@
         </ng-template>
       </td>
 
-      <td>{{ asset.supplier?.name }}</td>
-      <td>{{ asset.assetType?.name }}</td>
-      <td>{{ asset.location?.name }}</td>
+      <td>{{ asset.supplier.name }}</td>
+      <td>{{ asset.assetType.name }}</td>
+      <td>{{ asset.location.name }}</td>
     </tr>
     </tbody>
   </table>

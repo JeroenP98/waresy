@@ -1,1 +1,51 @@
-<h2 class="text-2xl font-bold">Dashboard</h2>
+<app-finalize-maintenance-task
+  [task]="selectedTaskToFinalize"
+  (submit)="submitFinalReport($event)"
+  (cancel)="closeFinalizeModal()">
+</app-finalize-maintenance-task>
+<div class="bg-base-200 rounded-box shadow p-6 w-full md:w-1/2">
+  <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M13 16h-1v-4h-1m1-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z" />
+    </svg>
+    Task Notifications
+  </h2>
+
+  <ng-container *ngIf="notifications().length; else noTasks">
+    <div *ngFor="let notification of notifications()">
+      <ng-container *ngIf="notification.category === 'due' || notification.category === 'overdue'">
+        <div class="alert mb-3 flex flex-center"
+             [ngClass]="{
+               'alert-warning': notification.category === 'due',
+               'alert-error': notification.category === 'overdue'
+             }">
+          <div class="flex-1">
+            <span>
+              Task <strong>{{ notification.task.taskName }}</strong> is
+              <strong>{{ notification.category }}</strong>
+                <ng-container *ngIf="notification.category === 'overdue'">
+                  <ng-container *ngIf="notification.task.status === 'In Progress'">
+                    — work started, but overdue!
+                  </ng-container>
+                  <ng-container *ngIf="notification.task.status !== 'In Progress'">
+                    — not yet started.
+                  </ng-container>
+                </ng-container>
+              (Planned: {{ notification.task.plannedDate | date: 'dd-MM-yyyy' }})
+            </span>
+          </div>
+          <div class="ml-auto flex gap-2 items-center">
+            <button class="btn btn-sm btn-outline" (click)="openFinalizeModal(notification.task)">Finalize</button>
+            <button class="btn btn-sm btn-ghost" (click)="dismiss(notification)">✕</button>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
+
+  <ng-template #noTasks>
+    <div class="text-sm text-gray-500 italic">No upcoming or overdue tasks assigned to you.</div>
+  </ng-template>
+</div>
+
