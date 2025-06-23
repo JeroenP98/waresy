@@ -48,14 +48,15 @@ export class DashboardComponent implements OnInit {
     this.selectedTaskToFinalize = null;
   }
 
-  submitFinalReport(report: string) {
+  submitFinalReport(data: { report: string , performedDate: string}) {
     if (!this.selectedTaskToFinalize) return;
 
     const taskId = this.selectedTaskToFinalize._id;
 
     this.maintenanceTasksService.updateMaintenanceTask(taskId, {
       status: 'Completed',
-      finalReport: report
+      finalReport: data.report,
+      performedDate: new Date(data.performedDate)
     }).subscribe(() => {
       this.toastService.show('Task finalized successfully.', 'success');
       this.selectedTaskToFinalize = null;

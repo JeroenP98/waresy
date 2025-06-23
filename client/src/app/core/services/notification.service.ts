@@ -18,17 +18,24 @@ export class NotificationService {
       if (!userId) return;
 
       const today = new Date();
-      const sevenDaysFromNow = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const sevenDaysFromNow = new Date(today);
       sevenDaysFromNow.setDate(today.getDate() + 7);
 
       const result: MaintenanceTaskNotification[] = [];
 
       tasks.forEach(task => {
+        // Skip tasks that are not assigned to the current user or are already completed/cancelled
         if (task.assignedTo?.userID !== userId) return;
         if (task.status === 'Completed' || task.status === 'Cancelled') return;
 
         const plannedDate = new Date(task.plannedDate);
-        if (plannedDate < today) {
+        plannedDate.setHours(0, 0, 0, 0);
+        // Check if the task is overdue or due within the next 7 days
+        const isLateInProgress = task.status === 'In Progress' && plannedDate < today;
+
+        if (isLateInProgress || plannedDate < today) {
           result.push({ category: 'overdue', task });
         } else if (plannedDate <= sevenDaysFromNow) {
           result.push({ category: 'due', task });

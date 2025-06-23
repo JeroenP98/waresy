@@ -15,7 +15,7 @@
   <ng-container *ngIf="notifications().length; else noTasks">
     <div *ngFor="let notification of notifications()">
       <ng-container *ngIf="notification.category === 'due' || notification.category === 'overdue'">
-        <div class="alert mb-3"
+        <div class="alert mb-3 flex flex-center"
              [ngClass]="{
                'alert-warning': notification.category === 'due',
                'alert-error': notification.category === 'overdue'
@@ -24,10 +24,18 @@
             <span>
               Task <strong>{{ notification.task.taskName }}</strong> is
               <strong>{{ notification.category }}</strong>
+                <ng-container *ngIf="notification.category === 'overdue'">
+                  <ng-container *ngIf="notification.task.status === 'In Progress'">
+                    — work started, but overdue!
+                  </ng-container>
+                  <ng-container *ngIf="notification.task.status !== 'In Progress'">
+                    — not yet started.
+                  </ng-container>
+                </ng-container>
               (Planned: {{ notification.task.plannedDate | date: 'dd-MM-yyyy' }})
             </span>
           </div>
-          <div class="flex gap-2 items-center">
+          <div class="ml-auto flex gap-2 items-center">
             <button class="btn btn-sm btn-outline" (click)="openFinalizeModal(notification.task)">Finalize</button>
             <button class="btn btn-sm btn-ghost" (click)="dismiss(notification)">✕</button>
           </div>

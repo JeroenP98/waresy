@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {MaintenanceTask} from '../../../../shared/models/maintenance-tasks/maintenance-task';
 import {FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
-import {DatePipe, NgIf} from '@angular/common';
+import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {performedAfterPlannedValidator} from '../../validators/performedAfterPlannedValidator';
 
 @Component({
@@ -9,7 +9,8 @@ import {performedAfterPlannedValidator} from '../../validators/performedAfterPla
   imports: [
     ReactiveFormsModule,
     NgIf,
-    DatePipe
+    DatePipe,
+    NgForOf
   ],
   templateUrl: './finalize-maintenance-task.component.html',
   styleUrl: './finalize-maintenance-task.component.css'
