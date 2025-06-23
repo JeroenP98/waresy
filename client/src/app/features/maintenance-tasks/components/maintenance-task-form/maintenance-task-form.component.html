@@ -2,14 +2,14 @@
 
   <!-- Description -->
   <fieldset class="fieldset">
-    <legend class="fieldset-legend">Description</legend>
+    <legend class="fieldset-legend">Description<span class="text-error">*</span></legend>
     <textarea class="textarea w-full" placeholder="Enter task description" formControlName="description"></textarea>
   </fieldset>
 
 
   <!-- Assigned To -->
   <fieldset class="fieldset">
-    <legend class="fieldset-legend">Assigned To</legend>
+    <legend class="fieldset-legend">Assigned To<span class="text-error">*</span></legend>
     <select class="select w-full" formControlName="assignedTo">
       <option [value]="null">Select a user</option>
       <option *ngFor="let user of users" [ngValue]="user">
@@ -20,7 +20,7 @@
 
   <!-- Contractor -->
   <fieldset class="fieldset">
-    <legend class="fieldset-legend">Contractor</legend>
+    <legend class="fieldset-legend">Contractor<span class="text-error">*</span></legend>
     <select class="select w-full" formControlName="contractor">
       <option [value]="null">Select a supplier</option>
       <option *ngFor="let supplier of suppliers" [ngValue]="supplier">
@@ -31,7 +31,7 @@
 
   <!-- Planned Date -->
   <fieldset class="fieldset">
-    <legend class="fieldset-legend">Planned Date</legend>
+    <legend class="fieldset-legend">Planned Date<span class="text-error">*</span></legend>
     <input type="date" class="input w-full" formControlName="plannedDate" />
     <div *ngIf="form.get('plannedDate')?.errors?.['pastDate'] && form.get('plannedDate')?.touched" class="text-error text-sm mt-1">
       Planned date cannot be in the past.
@@ -41,7 +41,7 @@
 
   <!-- Asset Selection -->
   <fieldset class="fieldset">
-    <legend class="fieldset-legend">Assets</legend>
+    <legend class="fieldset-legend">Assets<span class="text-error">*</span></legend>
     <p-multiselect [options]="assets" formControlName="assets" optionLabel="name" placeholder="Select Assets" [maxSelectedLabels]="2" styleClass="w-full md:w-80" class="w-full"></p-multiselect>
   </fieldset>
 

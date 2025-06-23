@@ -19,8 +19,10 @@ export const addNewAsset = async (req, res) => {
         const asset = await newAsset.save();
         return ApiResponse.success(res, 'Asset successfully created', asset, 201);
     } catch (err) {
-        console.error('Asset creation failed:', err);
-        return ApiResponse.error(res, 'Failed to create asset: ' + (err.message || err), 400);
+        return err.message.includes('E11000') ?
+            ApiResponse.error(res, 'Asset with this serial number already exists', 400) :
+            ApiResponse.error(res, 'Failed to create asset: ' + (err.message || err), 400);
+
     }
 }
 
