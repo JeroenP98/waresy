@@ -35,7 +35,7 @@
       (click)="openFinalizeModal(selectedTask)">Finalize task</button>
     <button
       class="btn btn-error"
-      [disabled]="!selectedTask || selectedTask?.status == 'Completed'"
+      [disabled]="!selectedTask || selectedTask.status == 'Completed'"
       (click)="onDeleteMaintenanceTask()">
       Delete
     </button>
@@ -99,8 +99,8 @@
             </span>
         </ng-template>
       </td>
-      <td>{{ task.assignedTo?.firstName }} {{ task.assignedTo?.lastName }}</td>
-      <td>{{ task.contractor?.name }}</td>
+      <td>{{ task.assignedTo.firstName }} {{ task.assignedTo.lastName }}</td>
+      <td>{{ task.contractor.name }}</td>
       <td>{{ task.plannedDate | date: 'dd-MM-yyyy' }}</td>
       <td>{{ task.performedDate ? (task.performedDate | date: 'dd-MM-yyyy') : '—' }}</td>
       <!-- View Report button -->
