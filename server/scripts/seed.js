@@ -16,7 +16,7 @@ const AssetType = mongoose.model('AssetType', AssetTypeSchema);
 const seedBaseTables = async () => {
     try {
 
-        await mongoose.connect("mongodb://127.0.0.1:27017/waresy");
+        await mongoose.connect(process.env.MONGODB_URI);
         console.log('Connected to database');
 
         // Clear collections

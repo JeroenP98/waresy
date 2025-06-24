@@ -32,4 +32,4 @@ COPY . .
 EXPOSE 3000
 
 # Run the application.
-CMD npm start
+CMD ["npm", "start"]
