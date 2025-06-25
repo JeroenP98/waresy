@@ -5,7 +5,7 @@ services:
       - "3000:3000"
     environment:
       - JWT_SECRET=${JWT_SECRET}
-      - MONGODB_URI=mongodb://mongo:27017/waresy
+      - MONGODB_URI=${MONGODB_URI}
     depends_on:
       - mongo
     volumes:
