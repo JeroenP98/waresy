@@ -5,8 +5,8 @@
     <!-- 🔍 Task Details -->
     <div class="bg-base-200 p-4 rounded-box mb-4 text-sm space-y-2">
       <p><strong>Status:</strong> {{ task.status }}</p>
-      <p><strong>Assigned To:</strong> {{ task.assignedTo?.firstName }} {{ task.assignedTo?.lastName }}</p>
-      <p><strong>Contractor:</strong> {{ task.contractor?.name }}</p>
+      <p><strong>Assigned To:</strong> {{ task.assignedTo.firstName }} {{ task.assignedTo.lastName }}</p>
+      <p><strong>Contractor:</strong> {{ task.contractor.name }}</p>
       <p><strong>Planned Date:</strong> {{ task.plannedDate | date: 'dd-MM-yyyy' }}</p>
       <p><strong>Description:</strong><br />
         <span class="italic">{{ task.description }}</span>
@@ -16,7 +16,7 @@
         <p class="font-semibold mt-2">Assets:</p>
         <ul class="list-disc list-inside ml-2">
           <li *ngFor="let asset of task.assets">
-            {{ asset.assetName }} <span class="text-xs text-gray-500">({{ asset.assetType?.name }})</span>
+            {{ asset.assetName }} <span class="text-xs text-gray-500">({{ asset.assetType.name }})</span>
           </li>
         </ul>
       </div>
