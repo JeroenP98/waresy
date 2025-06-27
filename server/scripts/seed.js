@@ -5,6 +5,7 @@ import { AssetSchema } from '../models/assetModel.js';
 import { SupplierSchema } from '../models/supplierModel.js';
 import bcrypt from "bcrypt";
 import {AssetTypeSchema} from "../models/assetType.js";
+import {MaintenanceTaskSchema} from "../models/maintenanceTaskModel.js";
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ const User = mongoose.model('Users', UserSchema);
 const Asset = mongoose.model('Assets', AssetSchema);
 const Supplier = mongoose.model('Supplier', SupplierSchema);
 const AssetType = mongoose.model('AssetType', AssetTypeSchema);
+const MaintenanceTask = mongoose.model('MaintenanceTask', MaintenanceTaskSchema);
 
 const seedBaseTables = async () => {
     try {
@@ -24,6 +26,7 @@ const seedBaseTables = async () => {
         await Asset.deleteMany();
         await Supplier.deleteMany();
         await AssetType.deleteMany();
+        await MaintenanceTask.deleteMany();
 
         // Add users
         const users = await User.insertMany([
@@ -32,28 +35,40 @@ const seedBaseTables = async () => {
                 lastName: 'Doe',
                 email: 'john@example.com',
                 hashPassword: bcrypt.hashSync('12345', 10),
-                role: 'Admin'
+                role: 'Admin',
+                fullName: 'John Doe'
             },
             {
                 firstName: 'Alice',
                 lastName: 'Smith',
                 email: 'alice.smith@example.com',
                 hashPassword: bcrypt.hashSync('12345', 10),
-                role: 'User'
+                role: 'User',
+                fullName: 'Alice Smith'
             },
             {
                 firstName: 'Bob',
                 lastName: 'Johnson',
                 email: 'bob.johnson@example.com',
                 hashPassword: bcrypt.hashSync('12345', 10),
-                role: 'User'
+                role: 'User',
+                fullName: 'Bob Johnson'
             },
             {
                 firstName: 'Eve',
                 lastName: 'Taylor',
                 email: 'eve.taylor@example.com',
                 hashPassword: bcrypt.hashSync('12345', 10),
-                role: 'User'
+                role: 'User',
+                fullName: 'Eve Taylor'
+            },
+            {
+                firstName: 'Jeroen',
+                lastName: 'Post',
+                email: 'jeroenf_post@outlook.com',
+                hashPassword: bcrypt.hashSync('12345', 10),
+                role: 'User',
+                fullName: 'Jeroen Post'
             }
         ]);
 
@@ -168,6 +183,9 @@ const createAssets = async () => {
     await Asset.insertMany(assets);
     console.log(`✅ ${assets.length} warehouse assets seeded (${assetTypes.length} types x 5 each)`);
 };
+
+
+
 
 
 await seedBaseTables();

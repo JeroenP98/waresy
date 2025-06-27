@@ -21,10 +21,10 @@ describe('Asset Controller', () => {
         };
 
         // Register the user
-        await request(app).post('/auth/register').send(testUser).expect(201);
+        await request(app).post('/api/auth/register').send(testUser).expect(201);
 
         // Log in to get JWT token
-        const loginResponse = await request(app).post('/auth/login').send({
+        const loginResponse = await request(app).post('/api/auth/login').send({
             email: testUser.email,
             password: testUser.password
         }).expect(200);
@@ -48,7 +48,7 @@ describe('Asset Controller', () => {
         }
     });
 
-    describe('POST /assets', () => {
+    describe('POST /api/assets', () => {
         let validAssetType;
 
         beforeEach(async () => {
@@ -84,7 +84,7 @@ describe('Asset Controller', () => {
             };
 
             const response = await request(app)
-                .post('/assets')
+                .post('/api/assets')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send(newAsset)
                 .expect(201);
@@ -111,7 +111,7 @@ describe('Asset Controller', () => {
             };
 
             const response = await request(app)
-                .post('/assets')
+                .post('/api/assets')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send(assetWithoutName)
                 .expect(400);
@@ -138,7 +138,7 @@ describe('Asset Controller', () => {
             };
 
             const response = await request(app)
-                .post('/assets')
+                .post('/api/assets')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send(invalidStatusAsset)
                 .expect(400);
@@ -165,13 +165,13 @@ describe('Asset Controller', () => {
             };
 
             await request(app)
-                .post('/assets')
+                .post('/api/assets')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send(duplicateAsset)
                 .expect(201);
 
             const response = await request(app)
-                .post('/assets')
+                .post('/api/assets')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send(duplicateAsset)
                 .expect(400);
@@ -198,7 +198,7 @@ describe('Asset Controller', () => {
             };
 
             const response = await request(app)
-                .post('/assets')
+                .post('/api/assets')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send(invalidEmailAsset)
                 .expect(400);
@@ -209,7 +209,7 @@ describe('Asset Controller', () => {
     });
 
 
-    describe('GET /assets', () => {
+    describe('GET /api/assets', () => {
         let validAssetType;
 
         beforeEach(async () => {
@@ -239,13 +239,13 @@ describe('Asset Controller', () => {
             };
 
             await request(app)
-                .post('/assets')
+                .post('/api/assets')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send(assetData)
                 .expect(201);
 
             const response = await request(app)
-                .get('/assets')
+                .get('/api/assets')
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(200);
 
@@ -261,7 +261,7 @@ describe('Asset Controller', () => {
         it('should return an empty array if no assets exist', async () => {
             await Asset.deleteMany({});
             const response = await request(app)
-                .get('/assets')
+                .get('/api/assets')
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(200);
 
@@ -277,7 +277,7 @@ describe('Asset Controller', () => {
             };
 
             const response = await request(app)
-                .get('/assets')
+                .get('/api/assets')
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(400);
 
@@ -288,7 +288,7 @@ describe('Asset Controller', () => {
         });
     });
 
-    describe('GET /assets/:assetId', () => {
+    describe('GET /api/assets/:assetId', () => {
         let assetId;
         let validAssetType;
 
@@ -324,7 +324,7 @@ describe('Asset Controller', () => {
 
         it('should return a single asset by ID', async () => {
             const response = await request(app)
-                .get(`/assets/${assetId}`)
+                .get(`/api/assets/${assetId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(200);
 
@@ -336,7 +336,7 @@ describe('Asset Controller', () => {
         it('should return 404 if asset is not found', async () => {
             const nonExistentId = new mongoose.Types.ObjectId();
             const response = await request(app)
-                .get(`/assets/${nonExistentId}`)
+                .get(`/api/assets/${nonExistentId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(404);
 
@@ -351,7 +351,7 @@ describe('Asset Controller', () => {
             };
 
             const response = await request(app)
-                .get(`/assets/${assetId}`)
+                .get(`/api/assets/${assetId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(400);
 
@@ -363,7 +363,7 @@ describe('Asset Controller', () => {
         });
     });
 
-    describe('PATCH /assets/:assetId', () => {
+    describe('PATCH /api/assets/:assetId', () => {
         let assetId;
         let validAssetType;
 
@@ -402,7 +402,7 @@ describe('Asset Controller', () => {
         it('should update an existing asset', async () => {
             const update = { name: "Updated Asset Name" };
             const response = await request(app)
-                .patch(`/assets/${assetId}`)
+                .patch(`/api/assets/${assetId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .send(update)
                 .expect(200);
@@ -414,7 +414,7 @@ describe('Asset Controller', () => {
         it('should return 404 if asset not found', async () => {
             const nonExistentId = new mongoose.Types.ObjectId();
             const response = await request(app)
-                .patch(`/assets/${nonExistentId}`)
+                .patch(`/api/assets/${nonExistentId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({ name: "Doesn't Matter" })
                 .expect(404);
@@ -431,7 +431,7 @@ describe('Asset Controller', () => {
             };
 
             const response = await request(app)
-                .patch(`/assets/${assetId}`)
+                .patch(`/api/assets/${assetId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({ name: "Error Asset" })
                 .expect(400);
@@ -444,7 +444,7 @@ describe('Asset Controller', () => {
         });
     });
 
-    describe('DELETE /assets/:assetId', () => {
+    describe('DELETE /api/assets/:assetId', () => {
         let assetId;
         let validAssetType;
 
@@ -483,7 +483,7 @@ describe('Asset Controller', () => {
 
         it('should delete an existing asset', async () => {
             const response = await request(app)
-                .delete(`/assets/${assetId}`)
+                .delete(`/api/assets/${assetId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(200);
 
@@ -494,7 +494,7 @@ describe('Asset Controller', () => {
         it('should return 404 if asset not found', async () => {
             const nonExistentId = new mongoose.Types.ObjectId();
             const response = await request(app)
-                .delete(`/assets/${nonExistentId}`)
+                .delete(`/api/assets/${nonExistentId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(404);
 
@@ -509,7 +509,7 @@ describe('Asset Controller', () => {
             };
 
             const response = await request(app)
-                .delete(`/assets/${assetId}`)
+                .delete(`/api/assets/${assetId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(400);
 
