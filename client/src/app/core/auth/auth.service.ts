@@ -27,7 +27,6 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<{ success: boolean; error?: string }> {
-    console.log('Using API URL:', environment.apiUrl);
     return this.http
       .post<LoginResponseModel>(`${this.apiUrl}/auth/login`, { email, password })
       .pipe(

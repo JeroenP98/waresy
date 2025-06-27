@@ -13,7 +13,10 @@ const initializeApp = () => {
 
     const app = express();
 
-    app.use(cors())
+    app.use(cors({
+        origin: 'http://localhost:4200',
+        credentials: true,
+    }))
 
     // Helmet setup
     app.use(helmet());
