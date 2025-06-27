@@ -5,9 +5,9 @@ import assetTypeRoutes from './assetTypeRoutes.js';
 import maintenanceTaskRoutes from './maintenanceTaskRoutes.js';
 
 export default function routes(app) {
-    app.use(authRoutes);
-    app.use(assetRoutes);
-    app.use(supplierRoutes);
-    app.use(assetTypeRoutes);
-    app.use(maintenanceTaskRoutes);
+    app.use('/api', authRoutes);
+    app.use('/api',assetRoutes);
+    app.use('/api',supplierRoutes);
+    app.use('/api',assetTypeRoutes);
+    app.use('/api',maintenanceTaskRoutes);
 }

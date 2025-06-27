@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 import jsonwebtoken from "jsonwebtoken";
 import routes from "./routes/index.js";
 import cors from 'cors';
+import helmet from "helmet";
+import { rateLimit } from 'express-rate-limit'
 
 const initializeApp = () => {
     dotenv.config();
@@ -15,6 +17,18 @@ const initializeApp = () => {
         origin: 'http://localhost:4200',
         credentials: true,
     }))
+
+    // Helmet setup
+    app.use(helmet());
+
+    // Rate limiting setup
+    const limiter = rateLimit({
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 1000, // Limit each IP to 1000 requests per windowMs
+        message: "Too many requests from this IP, please try again after an hour",
+    })
+
+    app.use(limiter)
 
     // Mongoose connection
     mongoose.Promise = global.Promise;

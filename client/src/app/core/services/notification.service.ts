@@ -44,6 +44,12 @@ export class NotificationService {
         }
       });
 
+      result.sort((a, b) => {
+        const dateA = new Date(a.task.plannedDate).getTime();
+        const dateB = new Date(b.task.plannedDate).getTime();
+        return dateA - dateB;
+      });
+
       this.notifications.set(result);
     });
   }

@@ -19,13 +19,13 @@ beforeAll(async () => {
 
     // Register test user
     await request(app)
-        .post('/auth/register')
+        .post('/api/auth/register')
         .send(testUser)
         .expect(201);
 
     // Login to get JWT token
     const loginResponse = await request(app)
-        .post('/auth/login')
+        .post('/api/auth/login')
         .send({
             email: testUser.email,
             password: testUser.password
@@ -47,10 +47,10 @@ afterAll(async () => {
 });
 
 describe('User Controller', () => {
-    describe('POST /auth/register', () => {
+    describe('POST /api/auth/register', () => {
         it('should register a new user successfully', async () => {
             const response = await request(app)
-                .post('/auth/register')
+                .post('/api/auth/register')
                 .send({
                     firstName: 'Jane',
                     lastName: 'Smith',
@@ -68,7 +68,7 @@ describe('User Controller', () => {
 
         it('should return 400 if required fields are missing', async () => {
             const response = await request(app)
-                .post('/auth/register')
+                .post('/api/auth/register')
                 .send({
                     firstName: 'MissingFields'
                     // lastName, email, password are missing
@@ -80,7 +80,7 @@ describe('User Controller', () => {
 
         it('should return 400 for invalid email format', async () => {
             const response = await request(app)
-                .post('/auth/register')
+                .post('/api/auth/register')
                 .send({
                     firstName: 'BadEmail',
                     lastName: 'Tester',
@@ -103,17 +103,17 @@ describe('User Controller', () => {
             };
 
             const response = await request(app)
-                .post('/auth/register')
+                .post('/api/auth/register')
                 .send(duplicateUser)
                 .expect(400);
 
             expect(response.body.message || response.body.error).toMatch(/duplicate/i);
         });
     });
-    describe('POST /auth/login', () => {
+    describe('POST /api/auth/login', () => {
         it('should log in successfully with valid credentials', async () => {
             const response = await request(app)
-                .post('/auth/login')
+                .post('/api/auth/login')
                 .send({
                     email: 'john.doe@example.com',
                     password: 'Test@1234'
@@ -127,7 +127,7 @@ describe('User Controller', () => {
 
         it('should return 400 if email or password is missing', async () => {
             const response = await request(app)
-                .post('/auth/login')
+                .post('/api/auth/login')
                 .send({ email: 'john.doe@example.com' }) // password is missing
                 .expect(400);
 
@@ -136,7 +136,7 @@ describe('User Controller', () => {
 
         it('should return 401 if password is incorrect', async () => {
             const response = await request(app)
-                .post('/auth/login')
+                .post('/api/auth/login')
                 .send({
                     email: 'john.doe@example.com',
                     password: 'WrongPassword!'
@@ -149,7 +149,7 @@ describe('User Controller', () => {
 
         it('should return 404 if user is not found', async () => {
             const response = await request(app)
-                .post('/auth/login')
+                .post('/api/auth/login')
                 .send({
                     email: 'nonexistent@example.com',
                     password: 'DoesNotMatter123'
@@ -160,7 +160,7 @@ describe('User Controller', () => {
             expect(response.body.message).toMatch(/not found/i);
         });
     });
-    describe('GET /auth/user?email=', () => {
+    describe('GET /api/auth/user?email=', () => {
         const testUser = {
             firstName: 'Alice',
             lastName: 'Wonder',
@@ -182,18 +182,18 @@ describe('User Controller', () => {
 
         beforeAll(async () => {
             // Register both users
-            await request(app).post('/auth/register').send(testUser).expect(201);
-            await request(app).post('/auth/register').send(otherUser).expect(201);
+            await request(app).post('/api/auth/register').send(testUser).expect(201);
+            await request(app).post('/api/auth/register').send(otherUser).expect(201);
 
             // Login Alice
-            const loginRes = await request(app).post('/auth/login').send({
+            const loginRes = await request(app).post('/api/auth/login').send({
                 email: testUser.email,
                 password: testUser.password
             });
             userToken = loginRes.body.data.token;
 
             // Login Bob
-            const otherLoginRes = await request(app).post('/auth/login').send({
+            const otherLoginRes = await request(app).post('/api/auth/login').send({
                 email: otherUser.email,
                 password: otherUser.password
             });
@@ -207,7 +207,7 @@ describe('User Controller', () => {
 
         it('should return the current user\'s profile if token and email match', async () => {
             const response = await request(app)
-                .get(`/auth/user?email=${testUser.email}`)
+                .get(`/api/auth/user?email=${testUser.email}`)
                 .set('Authorization', `Bearer ${userToken}`)
                 .expect(200);
 
@@ -217,7 +217,7 @@ describe('User Controller', () => {
 
         it('should return 403 if user tries to access another user\'s profile', async () => {
             const response = await request(app)
-                .get(`/auth/user?email=${otherUser.email}`)
+                .get(`/api/auth/user?email=${otherUser.email}`)
                 .set('Authorization', `Bearer ${userToken}`) // Alice using Bob's email
                 .expect(403);
 
@@ -227,7 +227,7 @@ describe('User Controller', () => {
 
         it('should return 400 if no email is provided', async () => {
             const response = await request(app)
-                .get('/auth/user')
+                .get('/api/auth/user')
                 .set('Authorization', `Bearer ${userToken}`)
                 .expect(400);
 
@@ -238,7 +238,7 @@ describe('User Controller', () => {
         it('should return 404 if the user does not exist', async () => {
             const fakeEmail = 'doesnotexist@example.com';
             const response = await request(app)
-                .get(`/auth/user?email=${fakeEmail}`)
+                .get(`/api/auth/user?email=${fakeEmail}`)
                 .set('Authorization', `Bearer ${userToken}`) // token is valid, but email not found
                 .expect(403); // Still 403 due to mismatch, not 404
 
@@ -256,7 +256,7 @@ describe('User Controller', () => {
             );
 
             const response = await request(app)
-                .get(`/auth/user?email=${fakeEmail}`)
+                .get(`/api/auth/user?email=${fakeEmail}`)
                 .set('Authorization', `Bearer ${token}`)
                 .expect(404);
 
@@ -276,7 +276,7 @@ describe('User Controller', () => {
             User.findOne = () => { throw new Error('Simulated DB failure'); };
 
             const response = await request(app)
-                .get('/auth/user?email=errorcase@example.com')
+                .get('/api/auth/user?email=errorcase@example.com')
                 .set('Authorization', `Bearer ${token}`)
                 .expect(400);
 
@@ -289,7 +289,7 @@ describe('User Controller', () => {
 
 
     });
-    describe('PATCH /auth/user/:email', () => {
+    describe('PATCH /api/auth/user/:email', () => {
         const alice = {
             firstName: 'Alice',
             lastName: 'Wonder',
@@ -310,16 +310,16 @@ describe('User Controller', () => {
         let bobToken;
 
         beforeAll(async () => {
-            await request(app).post('/auth/register').send(alice).expect(201);
-            await request(app).post('/auth/register').send(bob).expect(201);
+            await request(app).post('/api/auth/register').send(alice).expect(201);
+            await request(app).post('/api/auth/register').send(bob).expect(201);
 
-            const aliceLogin = await request(app).post('/auth/login').send({
+            const aliceLogin = await request(app).post('/api/auth/login').send({
                 email: alice.email,
                 password: alice.password
             });
             aliceToken = aliceLogin.body.data.token;
 
-            const bobLogin = await request(app).post('/auth/login').send({
+            const bobLogin = await request(app).post('/api/auth/login').send({
                 email: bob.email,
                 password: bob.password
             });
@@ -333,7 +333,7 @@ describe('User Controller', () => {
 
         it('should allow a user to update their own profile', async () => {
             const response = await request(app)
-                .patch(`/auth/user/${alice.email}`)
+                .patch(`/api/auth/user/${alice.email}`)
                 .set('Authorization', `Bearer ${aliceToken}`)
                 .send({ firstName: 'Alicia' })
                 .expect(200);
@@ -344,7 +344,7 @@ describe('User Controller', () => {
 
         it('should allow an admin to update another user\'s profile', async () => {
             const response = await request(app)
-                .patch(`/auth/user/${alice.email}`)
+                .patch(`/api/auth/user/${alice.email}`)
                 .set('Authorization', `Bearer ${bobToken}`)
                 .send({ lastName: 'UpdatedByAdmin' })
                 .expect(200);
@@ -355,7 +355,7 @@ describe('User Controller', () => {
 
         it('should reject a user trying to update another user\'s profile', async () => {
             const response = await request(app)
-                .patch(`/auth/user/${bob.email}`)
+                .patch(`/api/auth/user/${bob.email}`)
                 .set('Authorization', `Bearer ${aliceToken}`)
                 .send({ firstName: 'HackerAlice' })
                 .expect(403);
@@ -366,7 +366,7 @@ describe('User Controller', () => {
 
         it('should prevent non-admin users from changing their own role', async () => {
             const response = await request(app)
-                .patch(`/auth/user/${alice.email}`)
+                .patch(`/api/auth/user/${alice.email}`)
                 .set('Authorization', `Bearer ${aliceToken}`)
                 .send({ role: 'Admin' }) // malicious intent
                 .expect(403);
@@ -382,7 +382,7 @@ describe('User Controller', () => {
 
         it('should allow an admin to change a user\'s role', async () => {
             const response = await request(app)
-                .patch(`/auth/user/${alice.email}`)
+                .patch(`/api/auth/user/${alice.email}`)
                 .set('Authorization', `Bearer ${bobToken}`)
                 .send({ role: 'Admin' })
                 .expect(200);
@@ -395,7 +395,7 @@ describe('User Controller', () => {
             const newPassword = 'NewSecurePass123!';
 
             await request(app)
-                .patch(`/auth/user/${alice.email}`)
+                .patch(`/api/auth/user/${alice.email}`)
                 .set('Authorization', `Bearer ${aliceToken}`)
                 .send({ password: newPassword })
                 .expect(200);
@@ -415,7 +415,7 @@ describe('User Controller', () => {
             const nonExistentEmail = 'ghostuser@example.com';
 
             const response = await request(app)
-                .patch(`/auth/user/${nonExistentEmail}`)
+                .patch(`/api/auth/user/${nonExistentEmail}`)
                 .set('Authorization', `Bearer ${bobToken}`) // Admin
                 .send({ firstName: 'Ghosty' })
                 .expect(404);
@@ -432,7 +432,7 @@ describe('User Controller', () => {
             User.findOneAndUpdate = () => { throw new Error('Simulated DB failure'); };
 
             const response = await request(app)
-                .patch(`/auth/user/${alice.email}`)
+                .patch(`/api/auth/user/${alice.email}`)
                 .set('Authorization', `Bearer ${aliceToken}`)
                 .send({ firstName: 'CrashTest' })
                 .expect(400);
@@ -446,7 +446,7 @@ describe('User Controller', () => {
 
 
     });
-    describe('GET /auth/users', () => {
+    describe('GET /api/auth/users', () => {
         const adminUser = {
             firstName: 'Admin',
             lastName: 'User',
@@ -468,18 +468,18 @@ describe('User Controller', () => {
 
         beforeAll(async () => {
             // Register both users
-            await request(app).post('/auth/register').send(adminUser).expect(201);
-            await request(app).post('/auth/register').send(normalUser).expect(201);
+            await request(app).post('/api/auth/register').send(adminUser).expect(201);
+            await request(app).post('/api/auth/register').send(normalUser).expect(201);
 
             // Log in admin
             const adminLogin = await request(app)
-                .post('/auth/login')
+                .post('/api/auth/login')
                 .send({ email: adminUser.email, password: adminUser.password });
             adminToken = adminLogin.body.data.token;
 
             // Log in regular user
             const userLogin = await request(app)
-                .post('/auth/login')
+                .post('/api/auth/login')
                 .send({ email: normalUser.email, password: normalUser.password });
             userToken = userLogin.body.data.token;
         });
@@ -491,7 +491,7 @@ describe('User Controller', () => {
 
         it('should allow an admin to retrieve all users', async () => {
             const response = await request(app)
-                .get('/auth/users')
+                .get('/api/auth/users')
                 .set('Authorization', `Bearer ${adminToken}`)
                 .expect(200);
 
@@ -505,7 +505,7 @@ describe('User Controller', () => {
 
         it('should return 401 if no token is provided', async () => {
             const response = await request(app)
-                .get('/auth/users')
+                .get('/api/auth/users')
                 .expect(401);
 
             expect(response.body).toHaveProperty('message', 'Unauthorized');
@@ -520,7 +520,7 @@ describe('User Controller', () => {
             };
 
             const response = await request(app)
-                .get('/auth/users')
+                .get('/api/auth/users')
                 .set('Authorization', `Bearer ${adminToken}`)
                 .expect(400);
 
@@ -532,7 +532,7 @@ describe('User Controller', () => {
         });
 
     });
-    describe('DELETE /auth/user/:email', () => {
+    describe('DELETE /api/auth/user/:email', () => {
         const admin = {
             firstName: 'Admin',
             lastName: 'User',
@@ -562,19 +562,19 @@ describe('User Controller', () => {
 
         beforeAll(async () => {
             // Register accounts
-            await request(app).post('/auth/register').send(admin).expect(201);
-            await request(app).post('/auth/register').send(userToDelete).expect(201);
-            await request(app).post('/auth/register').send(otherUser).expect(201);
+            await request(app).post('/api/auth/register').send(admin).expect(201);
+            await request(app).post('/api/auth/register').send(userToDelete).expect(201);
+            await request(app).post('/api/auth/register').send(otherUser).expect(201);
 
             // Log in admin
-            const adminLogin = await request(app).post('/auth/login').send({
+            const adminLogin = await request(app).post('/api/auth/login').send({
                 email: admin.email,
                 password: admin.password
             });
             adminToken = adminLogin.body.data.token;
 
             // Log in regular user
-            const userLogin = await request(app).post('/auth/login').send({
+            const userLogin = await request(app).post('/api/auth/login').send({
                 email: otherUser.email,
                 password: otherUser.password
             });
@@ -588,7 +588,7 @@ describe('User Controller', () => {
 
         it('should allow an admin to delete a user', async () => {
             const res = await request(app)
-                .delete(`/auth/user/${userToDelete.email}`)
+                .delete(`/api/auth/user/${userToDelete.email}`)
                 .set('Authorization', `Bearer ${adminToken}`)
                 .expect(200);
 
@@ -599,7 +599,7 @@ describe('User Controller', () => {
 
         it('should return 404 if user to delete does not exist', async () => {
             const res = await request(app)
-                .delete('/auth/user/nonexistent@example.com')
+                .delete('/api/auth/user/nonexistent@example.com')
                 .set('Authorization', `Bearer ${adminToken}`)
                 .expect(404);
 
@@ -609,7 +609,7 @@ describe('User Controller', () => {
 
         it('should reject non-admin users trying to delete users', async () => {
             const res = await request(app)
-                .delete(`/auth/user/${admin.email}`)
+                .delete(`/api/auth/user/${admin.email}`)
                 .set('Authorization', `Bearer ${userToken}`)
                 .expect(403);
 
@@ -619,7 +619,7 @@ describe('User Controller', () => {
 
         it('should return 401 if no token is provided', async () => {
             const res = await request(app)
-                .delete(`/auth/user/${admin.email}`)
+                .delete(`/api/auth/user/${admin.email}`)
                 .expect(401);
 
             expect(res.body).toHaveProperty('message', 'Unauthorized');
@@ -633,7 +633,7 @@ describe('User Controller', () => {
             };
 
             const res = await request(app)
-                .delete(`/auth/user/${otherUser.email}`)
+                .delete(`/api/auth/user/${otherUser.email}`)
                 .set('Authorization', `Bearer ${adminToken}`)
                 .expect(400);
 

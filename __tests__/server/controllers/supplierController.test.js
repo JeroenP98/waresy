@@ -26,9 +26,9 @@ describe('Supplier Controller', () => {
             role: 'Admin'
         };
 
-        await request(app).post('/auth/register').send(admin).expect(201);
+        await request(app).post('/api/auth/register').send(admin).expect(201);
 
-        const loginRes = await request(app).post('/auth/login').send({
+        const loginRes = await request(app).post('/api/auth/login').send({
             email: admin.email,
             password: admin.password
         });
@@ -48,7 +48,7 @@ describe('Supplier Controller', () => {
         }
     });
 
-    describe('GET /suppliers', () => {
+    describe('GET /api/suppliers', () => {
         let authToken;
 
         beforeAll(async () => {
@@ -59,8 +59,8 @@ describe('Supplier Controller', () => {
                 password: 'ListPass123!'
             };
 
-            await request(app).post('/auth/register').send(user).expect(201);
-            const loginRes = await request(app).post('/auth/login').send({
+            await request(app).post('/api/auth/register').send(user).expect(201);
+            const loginRes = await request(app).post('/api/auth/login').send({
                 email: user.email,
                 password: user.password
             });
@@ -69,7 +69,7 @@ describe('Supplier Controller', () => {
 
             // Add one supplier to make sure list is not empty
             await request(app)
-                .post('/suppliers')
+                .post('/api/suppliers')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({
                     name: 'List Supplier',
@@ -80,7 +80,7 @@ describe('Supplier Controller', () => {
 
         it('should return all suppliers', async () => {
             const res = await request(app)
-                .get('/suppliers')
+                .get('/api/suppliers')
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(200);
 
@@ -96,7 +96,7 @@ describe('Supplier Controller', () => {
             };
 
             const res = await request(app)
-                .get('/suppliers')
+                .get('/api/suppliers')
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(400);
 
@@ -108,7 +108,7 @@ describe('Supplier Controller', () => {
     });
 
 
-    describe('POST /suppliers', () => {
+    describe('POST /api/suppliers', () => {
         let authToken;
 
         beforeAll(async () => {
@@ -119,8 +119,8 @@ describe('Supplier Controller', () => {
                 password: 'Supplier123!'
             };
 
-            await request(app).post('/auth/register').send(user).expect(201);
-            const loginRes = await request(app).post('/auth/login').send({
+            await request(app).post('/api/auth/register').send(user).expect(201);
+            const loginRes = await request(app).post('/api/auth/login').send({
                 email: user.email,
                 password: user.password
             });
@@ -137,7 +137,7 @@ describe('Supplier Controller', () => {
             };
 
             const res = await request(app)
-                .post('/suppliers')
+                .post('/api/suppliers')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send(newSupplier)
                 .expect(201);
@@ -149,7 +149,7 @@ describe('Supplier Controller', () => {
 
         it('should return 400 if required fields are missing', async () => {
             const res = await request(app)
-                .post('/suppliers')
+                .post('/api/suppliers')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({ contactEmail: 'missing@fields.com' }) // missing name
                 .expect(400);
@@ -160,7 +160,7 @@ describe('Supplier Controller', () => {
 
         it('should return 400 for invalid email format', async () => {
             const res = await request(app)
-                .post('/suppliers')
+                .post('/api/suppliers')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({
                     name: 'Invalid Email Supplier',
@@ -175,7 +175,7 @@ describe('Supplier Controller', () => {
 
         it('should return 401 if user is not authenticated', async () => {
             const res = await request(app)
-                .post('/suppliers')
+                .post('/api/suppliers')
                 .send({
                     name: 'No Token Supplier',
                     contactEmail: 'noauth@supplier.com'
@@ -187,7 +187,7 @@ describe('Supplier Controller', () => {
 
     });
 
-    describe('GET /suppliers/:supplierId', () => {
+    describe('GET /api/suppliers/:supplierId', () => {
         let authToken;
         let supplierId;
 
@@ -199,8 +199,8 @@ describe('Supplier Controller', () => {
                 password: 'Get123!test'
             };
 
-            await request(app).post('/auth/register').send(user).expect(201);
-            const loginRes = await request(app).post('/auth/login').send({
+            await request(app).post('/api/auth/register').send(user).expect(201);
+            const loginRes = await request(app).post('/api/auth/login').send({
                 email: user.email,
                 password: user.password
             });
@@ -208,7 +208,7 @@ describe('Supplier Controller', () => {
             authToken = loginRes.body.data.token;
 
             const supplierRes = await request(app)
-                .post('/suppliers')
+                .post('/api/suppliers')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({
                     name: 'Test Supplier Co.',
@@ -223,7 +223,7 @@ describe('Supplier Controller', () => {
 
         it('should return the supplier by ID', async () => {
             const res = await request(app)
-                .get(`/suppliers/${supplierId}`)
+                .get(`/api/suppliers/${supplierId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(200);
 
@@ -236,7 +236,7 @@ describe('Supplier Controller', () => {
             const fakeId = new mongoose.Types.ObjectId();
 
             const res = await request(app)
-                .get(`/suppliers/${fakeId}`)
+                .get(`/api/suppliers/${fakeId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(404);
 
@@ -246,7 +246,7 @@ describe('Supplier Controller', () => {
 
         it('should return 400 for invalid supplier ID format', async () => {
             const res = await request(app)
-                .get('/suppliers/invalid-id-format')
+                .get('/api/suppliers/invalid-id-format')
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(400);
 
@@ -256,14 +256,14 @@ describe('Supplier Controller', () => {
 
         it('should return 401 if not authenticated', async () => {
             const res = await request(app)
-                .get(`/suppliers/${supplierId}`)
+                .get(`/api/suppliers/${supplierId}`)
                 .expect(401);
 
             expect(res.body).toHaveProperty('message', 'Unauthorized');
         });
     });
 
-    describe('PATCH /suppliers/:supplierId', () => {
+    describe('PATCH /api/suppliers/:supplierId', () => {
         let authToken;
         let supplierId;
         let validAssetType;
@@ -276,8 +276,8 @@ describe('Supplier Controller', () => {
                 password: 'PatchPass123!'
             };
 
-            await request(app).post('/auth/register').send(user).expect(201);
-            const loginRes = await request(app).post('/auth/login').send({
+            await request(app).post('/api/auth/register').send(user).expect(201);
+            const loginRes = await request(app).post('/api/auth/login').send({
                 email: user.email,
                 password: user.password
             });
@@ -286,7 +286,7 @@ describe('Supplier Controller', () => {
 
             // Create a supplier to update
             const createRes = await request(app)
-                .post('/suppliers')
+                .post('/api/suppliers')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({
                     name: 'Original Supplier',
@@ -301,7 +301,7 @@ describe('Supplier Controller', () => {
 
         it('should update a supplier with valid data', async () => {
             const res = await request(app)
-                .patch(`/suppliers/${supplierId}`)
+                .patch(`/api/suppliers/${supplierId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({ name: 'Updated Supplier Name' })
                 .expect(200);
@@ -313,7 +313,7 @@ describe('Supplier Controller', () => {
         it('should update embedded supplier in assets when supplier is patched', async () => {
             // Create supplier
             const supplierRes = await request(app)
-                .post('/suppliers')
+                .post('/api/suppliers')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({
                     name: 'Original Supplier',
@@ -324,7 +324,7 @@ describe('Supplier Controller', () => {
 
             // Create asset with embedded supplier
             const assetRes = await request(app)
-                .post('/assets')
+                .post('/api/assets')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({
                     name: "Test Asset",
@@ -346,14 +346,14 @@ describe('Supplier Controller', () => {
             // Patch supplier
             const updatedEmail = 'updated@supplier.com';
             await request(app)
-                .patch(`/suppliers/${supplierId}`)
+                .patch(`/api/suppliers/${supplierId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({ contactEmail: updatedEmail })
                 .expect(200);
 
             // Fetch updated asset
             const updatedAssetRes = await request(app)
-                .get(`/assets/${assetRes.body.data._id}`)
+                .get(`/api/assets/${assetRes.body.data._id}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(200);
 
@@ -363,7 +363,7 @@ describe('Supplier Controller', () => {
 
         it('should return 400 for invalid email format', async () => {
             const res = await request(app)
-                .patch(`/suppliers/${supplierId}`)
+                .patch(`/api/suppliers/${supplierId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({ contactEmail: 'bad-email' })
                 .expect(400);
@@ -375,7 +375,7 @@ describe('Supplier Controller', () => {
         it('should return 404 if supplier not found', async () => {
             const nonExistentId = new mongoose.Types.ObjectId();
             const res = await request(app)
-                .patch(`/suppliers/${nonExistentId}`)
+                .patch(`/api/suppliers/${nonExistentId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({ name: 'Ghost Supplier' })
                 .expect(404);
@@ -386,7 +386,7 @@ describe('Supplier Controller', () => {
 
         it('should return 400 for invalid supplier ID format', async () => {
             const res = await request(app)
-                .patch('/suppliers/invalid-id')
+                .patch('/api/suppliers/invalid-id')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({ name: 'Should Fail' })
                 .expect(400);
@@ -397,7 +397,7 @@ describe('Supplier Controller', () => {
 
         it('should return 401 if user is not authenticated', async () => {
             const res = await request(app)
-                .patch(`/suppliers/${supplierId}`)
+                .patch(`/api/suppliers/${supplierId}`)
                 .send({ name: 'NoAuth Update' })
                 .expect(401);
 
@@ -405,7 +405,7 @@ describe('Supplier Controller', () => {
         });
     });
 
-    describe('DELETE /suppliers/:supplierId', () => {
+    describe('DELETE /api/suppliers/:supplierId', () => {
         let authToken;
         let supplierId;
         let validAssetType;
@@ -418,8 +418,8 @@ describe('Supplier Controller', () => {
                 password: 'DeleteMe123!'
             };
 
-            await request(app).post('/auth/register').send(user).expect(201);
-            const loginRes = await request(app).post('/auth/login').send({
+            await request(app).post('/api/auth/register').send(user).expect(201);
+            const loginRes = await request(app).post('/api/auth/login').send({
                 email: user.email,
                 password: user.password
             });
@@ -428,7 +428,7 @@ describe('Supplier Controller', () => {
 
             // Create supplier to delete
             const createRes = await request(app)
-                .post('/suppliers')
+                .post('/api/suppliers')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({
                     name: 'Disposable Supplier',
@@ -441,7 +441,7 @@ describe('Supplier Controller', () => {
 
         it('should delete a supplier by ID', async () => {
             const res = await request(app)
-                .delete(`/suppliers/${supplierId}`)
+                .delete(`/api/suppliers/${supplierId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(200);
 
@@ -453,7 +453,7 @@ describe('Supplier Controller', () => {
             const nonExistentId = new mongoose.Types.ObjectId();
 
             const res = await request(app)
-                .delete(`/suppliers/${nonExistentId}`)
+                .delete(`/api/suppliers/${nonExistentId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(404);
 
@@ -463,7 +463,7 @@ describe('Supplier Controller', () => {
 
         it('should return 400 for invalid ID format', async () => {
             const res = await request(app)
-                .delete('/suppliers/invalid-id')
+                .delete('/api/suppliers/invalid-id')
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(400);
 
@@ -474,7 +474,7 @@ describe('Supplier Controller', () => {
         it('should return 401 if user is not authenticated', async () => {
             const fakeId = new mongoose.Types.ObjectId();
             const res = await request(app)
-                .delete(`/suppliers/${fakeId}`)
+                .delete(`/api/suppliers/${fakeId}`)
                 .expect(401);
 
             expect(res.body).toHaveProperty('message', 'Unauthorized');
@@ -483,7 +483,7 @@ describe('Supplier Controller', () => {
         it('should unset supplier in assets after deletion', async () => {
             // Step 1: Create a supplier
             const supplierRes = await request(app)
-                .post('/suppliers')
+                .post('/api/suppliers')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({
                     name: 'Embedded Supplier',
@@ -511,7 +511,7 @@ describe('Supplier Controller', () => {
             };
 
             const assetRes = await request(app)
-                .post('/assets')
+                .post('/api/assets')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send(assetPayload)
                 .expect(201);
@@ -520,13 +520,13 @@ describe('Supplier Controller', () => {
 
             // Step 3: Delete the supplier
             await request(app)
-                .delete(`/suppliers/${supplierId}`)
+                .delete(`/api/suppliers/${supplierId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(200);
 
             // Step 4: Fetch the asset again
             const updatedAssetRes = await request(app)
-                .get(`/assets/${assetId}`)
+                .get(`/api/assets/${assetId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(200);
 

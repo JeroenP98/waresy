@@ -53,11 +53,13 @@ export class AssetsComponent implements OnInit {
 
   openDrawer() {
     // Show a modal or navigate to a form page
+    this.drawerMode = 'asset'
     this.drawerOpen = true;
   }
 
   closeDrawer() {
     this.drawerOpen = false;
+    this.drawerMode = null;
   }
 
   fetchAll() {

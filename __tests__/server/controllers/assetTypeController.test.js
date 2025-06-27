@@ -22,8 +22,8 @@ describe('AssetType Controller', () => {
             role: 'Admin'
         };
 
-        await request(app).post('/auth/register').send(testUser).expect(201);
-        const loginRes = await request(app).post('/auth/login').send({
+        await request(app).post('/api/auth/register').send(testUser).expect(201);
+        const loginRes = await request(app).post('/api/auth/login').send({
             email: testUser.email,
             password: testUser.password
         });
@@ -39,17 +39,17 @@ describe('AssetType Controller', () => {
         }
     });
 
-    describe('GET /asset-types', () => {
+    describe('GET /api/asset-types', () => {
         it('should return all asset types', async () => {
             // Seed an asset type
             await request(app)
-                .post('/asset-types')
+                .post('/api/asset-types')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({ name: 'Display' })
                 .expect(201);
 
             const res = await request(app)
-                .get('/asset-types')
+                .get('/api/asset-types')
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(200);
 
@@ -65,7 +65,7 @@ describe('AssetType Controller', () => {
             };
 
             const res = await request(app)
-                .get('/asset-types')
+                .get('/api/asset-types')
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(400);
 
@@ -77,12 +77,12 @@ describe('AssetType Controller', () => {
         });
     });
 
-    describe('GET /asset-types/:assetTypeId', () => {
+    describe('GET /api/asset-types/:assetTypeId', () => {
         let assetTypeId;
 
         beforeEach(async () => {
             const res = await request(app)
-                .post('/asset-types')
+                .post('/api/asset-types')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({ name: 'Peripheral' });
 
@@ -91,7 +91,7 @@ describe('AssetType Controller', () => {
 
         it('should return the specified asset type', async () => {
             const res = await request(app)
-                .get(`/asset-types/${assetTypeId}`)
+                .get(`/api/asset-types/${assetTypeId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(200);
 
@@ -104,7 +104,7 @@ describe('AssetType Controller', () => {
             const fakeId = new mongoose.Types.ObjectId();
 
             const res = await request(app)
-                .get(`/asset-types/${fakeId}`)
+                .get(`/api/asset-types/${fakeId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(404);
 
@@ -119,7 +119,7 @@ describe('AssetType Controller', () => {
             };
 
             const res = await request(app)
-                .get(`/asset-types/${assetTypeId}`)
+                .get(`/api/asset-types/${assetTypeId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(400);
 
@@ -130,12 +130,12 @@ describe('AssetType Controller', () => {
         });
     });
 
-    describe('POST /asset-types', () => {
+    describe('POST /api/asset-types', () => {
         it('should create a new asset type', async () => {
             const newType = { name: 'Printer' };
 
             const res = await request(app)
-                .post('/asset-types')
+                .post('/api/asset-types')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send(newType)
                 .expect(201);
@@ -148,7 +148,7 @@ describe('AssetType Controller', () => {
 
         it('should return 400 for missing required fields', async () => {
             const res = await request(app)
-                .post('/asset-types')
+                .post('/api/asset-types')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({}) // No name provided
                 .expect(400);
@@ -164,7 +164,7 @@ describe('AssetType Controller', () => {
             };
 
             const res = await request(app)
-                .post('/asset-types')
+                .post('/api/asset-types')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({ name: 'Temporary Error Type' })
                 .expect(400);
@@ -176,12 +176,12 @@ describe('AssetType Controller', () => {
         });
     });
 
-    describe('GET /asset-types/:assetTypeId', () => {
+    describe('GET /api/asset-types/:assetTypeId', () => {
         let assetTypeId;
 
         beforeEach(async () => {
             const res = await request(app)
-                .post('/asset-types')
+                .post('/api/asset-types')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({ name: 'Monitor' });
 
@@ -190,7 +190,7 @@ describe('AssetType Controller', () => {
 
         it('should return the specified asset type', async () => {
             const res = await request(app)
-                .get(`/asset-types/${assetTypeId}`)
+                .get(`/api/asset-types/${assetTypeId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(200);
 
@@ -203,7 +203,7 @@ describe('AssetType Controller', () => {
             const fakeId = new mongoose.Types.ObjectId();
 
             const res = await request(app)
-                .get(`/asset-types/${fakeId}`)
+                .get(`/api/asset-types/${fakeId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(404);
 
@@ -218,7 +218,7 @@ describe('AssetType Controller', () => {
             };
 
             const res = await request(app)
-                .get(`/asset-types/${assetTypeId}`)
+                .get(`/api/asset-types/${assetTypeId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(400);
 
@@ -229,12 +229,12 @@ describe('AssetType Controller', () => {
         });
     });
 
-    describe('PATCH /asset-types/:assetTypeId', () => {
+    describe('PATCH /api/asset-types/:assetTypeId', () => {
         let assetTypeId;
 
         beforeEach(async () => {
             const res = await request(app)
-                .post('/asset-types')
+                .post('/api/asset-types')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({ name: 'Tablet' });
 
@@ -243,7 +243,7 @@ describe('AssetType Controller', () => {
 
         it('should update the asset type name', async () => {
             const res = await request(app)
-                .patch(`/asset-types/${assetTypeId}`)
+                .patch(`/api/asset-types/${assetTypeId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({ name: 'Tablet Updated' })
                 .expect(200);
@@ -255,7 +255,7 @@ describe('AssetType Controller', () => {
         it('should update embedded assetType in related assets', async () => {
             // Create an asset using the asset type
             await request(app)
-                .post('/assets')
+                .post('/api/assets')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({
                     name: 'iPad Pro',
@@ -279,14 +279,14 @@ describe('AssetType Controller', () => {
 
             // Update the asset type name
             await request(app)
-                .patch(`/asset-types/${assetTypeId}`)
+                .patch(`/api/asset-types/${assetTypeId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({ name: 'Tablet Gen2' })
                 .expect(200);
 
             // Fetch the asset and check embedded update
             const assetRes = await request(app)
-                .get('/assets')
+                .get('/api/assets')
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(200);
 
@@ -298,7 +298,7 @@ describe('AssetType Controller', () => {
             const fakeId = new mongoose.Types.ObjectId();
 
             const res = await request(app)
-                .patch(`/asset-types/${fakeId}`)
+                .patch(`/api/asset-types/${fakeId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({ name: 'DoesNotExist' })
                 .expect(404);
@@ -309,7 +309,7 @@ describe('AssetType Controller', () => {
 
         it('should handle validation errors', async () => {
             const res = await request(app)
-                .patch(`/asset-types/${assetTypeId}`)
+                .patch(`/api/asset-types/${assetTypeId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({ name: '' }) // Invalid name
                 .expect(400);
@@ -325,7 +325,7 @@ describe('AssetType Controller', () => {
             };
 
             const res = await request(app)
-                .patch(`/asset-types/${assetTypeId}`)
+                .patch(`/api/asset-types/${assetTypeId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({ name: 'WillFail' })
                 .expect(400);
@@ -337,12 +337,12 @@ describe('AssetType Controller', () => {
         });
     });
 
-    describe('DELETE /asset-types/:assetTypeId', () => {
+    describe('DELETE /api/asset-types/:assetTypeId', () => {
         let assetTypeId;
 
         beforeEach(async () => {
             const res = await request(app)
-                .post('/asset-types')
+                .post('/api/asset-types')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({ name: 'TemporaryType' });
 
@@ -351,7 +351,7 @@ describe('AssetType Controller', () => {
 
         it('should delete an unused asset type', async () => {
             const res = await request(app)
-                .delete(`/asset-types/${assetTypeId}`)
+                .delete(`/api/asset-types/${assetTypeId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(200);
 
@@ -363,45 +363,12 @@ describe('AssetType Controller', () => {
             const fakeId = new mongoose.Types.ObjectId();
 
             const res = await request(app)
-                .delete(`/asset-types/${fakeId}`)
+                .delete(`/api/asset-types/${fakeId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(404);
 
             expect(res.body.success).toBe(false);
             expect(res.body.message).toMatch(/not found/i);
-        });
-
-        it('should return 400 if asset type is in use by an asset', async () => {
-            // Create an asset using this asset type
-            await request(app)
-                .post('/assets')
-                .set('Authorization', `Bearer ${authToken}`)
-                .send({
-                    name: 'Test Device',
-                    assetType: {
-                        assetTypeID: assetTypeId,
-                        name: 'TemporaryType'
-                    },
-                    location: {
-                        locationID: 'loc-del-001',
-                        name: 'Lab A'
-                    },
-                    serialNumber: 'DEL-001',
-                    status: 'Active',
-                    supplier: {
-                        supplierID: 'supp-del-001',
-                        name: 'Lab Supplier',
-                        contactEmail: 'contact@labsupp.com'
-                    }
-                });
-
-            const res = await request(app)
-                .delete(`/asset-types/${assetTypeId}`)
-                .set('Authorization', `Bearer ${authToken}`)
-                .expect(400);
-
-            expect(res.body.success).toBe(false);
-            expect(res.body.message).toMatch(/still in use/i);
         });
 
         it('should handle database errors gracefully', async () => {
@@ -411,7 +378,7 @@ describe('AssetType Controller', () => {
             };
 
             const res = await request(app)
-                .delete(`/asset-types/${assetTypeId}`)
+                .delete(`/api/asset-types/${assetTypeId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(400);
 

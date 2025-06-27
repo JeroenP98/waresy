@@ -32,8 +32,8 @@ describe('Maintenance Task Controller', () => {
             role: 'Admin'
         };
 
-        await request(app).post('/auth/register').send(admin).expect(201);
-        const loginRes = await request(app).post('/auth/login').send({
+        await request(app).post('/api/auth/register').send(admin).expect(201);
+        const loginRes = await request(app).post('/api/auth/login').send({
             email: admin.email,
             password: admin.password
         });
@@ -87,7 +87,7 @@ describe('Maintenance Task Controller', () => {
         }
     });
 
-    describe('POST /maintenance-tasks', () => {
+    describe('POST /api/maintenance-tasks', () => {
         it('should create a new maintenance task', async () => {
             const baseTask = {
                 description: 'Quarterly forklift inspection',
@@ -113,7 +113,7 @@ describe('Maintenance Task Controller', () => {
                 }]
             };
             const res = await request(app)
-                .post('/maintenance-tasks')
+                .post('/api/maintenance-tasks')
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send(baseTask)
                 .expect(201);
@@ -153,7 +153,7 @@ describe('Maintenance Task Controller', () => {
             delete task.plannedDate;
 
             const res = await request(app)
-                .post('/maintenance-tasks')
+                .post('/api/maintenance-tasks')
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send(task)
                 .expect(400);
@@ -200,7 +200,7 @@ describe('Maintenance Task Controller', () => {
             };
 
             const res = await request(app)
-                .post('/maintenance-tasks')
+                .post('/api/maintenance-tasks')
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send(task)
                 .expect(400);
@@ -239,7 +239,7 @@ describe('Maintenance Task Controller', () => {
             };
 
             const res = await request(app)
-                .post('/maintenance-tasks')
+                .post('/api/maintenance-tasks')
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send(task)
                 .expect(400);
@@ -283,7 +283,7 @@ describe('Maintenance Task Controller', () => {
             };
 
             const res = await request(app)
-                .post('/maintenance-tasks')
+                .post('/api/maintenance-tasks')
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send(task)
                 .expect(400);
@@ -326,7 +326,7 @@ describe('Maintenance Task Controller', () => {
             };
 
             const res = await request(app)
-                .post('/maintenance-tasks')
+                .post('/api/maintenance-tasks')
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send(task)
                 .expect(400);
@@ -374,7 +374,7 @@ describe('Maintenance Task Controller', () => {
             };
 
             const res = await request(app)
-                .post('/maintenance-tasks')
+                .post('/api/maintenance-tasks')
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send(task)
                 .expect(201);
@@ -386,7 +386,7 @@ describe('Maintenance Task Controller', () => {
         });
     });
 
-    describe('GET /maintenance-tasks/:taskId', () => {
+    describe('GET /api/maintenance-tasks/:taskId', () => {
         let createdTaskId;
 
         beforeEach(async () => {
@@ -415,7 +415,7 @@ describe('Maintenance Task Controller', () => {
             };
 
             const res = await request(app)
-                .post('/maintenance-tasks')
+                .post('/api/maintenance-tasks')
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send(taskData)
                 .expect(201);
@@ -429,7 +429,7 @@ describe('Maintenance Task Controller', () => {
 
         it('should return a maintenance task by ID', async () => {
             const res = await request(app)
-                .get(`/maintenance-tasks/${createdTaskId}`)
+                .get(`/api/maintenance-tasks/${createdTaskId}`)
                 .set('Authorization', `Bearer ${adminToken}`)
                 .expect(200);
 
@@ -442,7 +442,7 @@ describe('Maintenance Task Controller', () => {
             const nonExistentId = new mongoose.Types.ObjectId().toString();
 
             const res = await request(app)
-                .get(`/maintenance-tasks/${nonExistentId}`)
+                .get(`/api/maintenance-tasks/${nonExistentId}`)
                 .set('Authorization', `Bearer ${adminToken}`)
                 .expect(404);
 
@@ -452,7 +452,7 @@ describe('Maintenance Task Controller', () => {
 
     });
 
-    describe('GET /maintenance-tasks', () => {
+    describe('GET /api/maintenance-tasks', () => {
         beforeEach(async () => {
             const taskData = {
                 description: 'General maintenance',
@@ -479,7 +479,7 @@ describe('Maintenance Task Controller', () => {
             };
 
             await request(app)
-                .post('/maintenance-tasks')
+                .post('/api/maintenance-tasks')
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send(taskData)
                 .expect(201);
@@ -491,7 +491,7 @@ describe('Maintenance Task Controller', () => {
 
         it('should return all maintenance tasks', async () => {
             const res = await request(app)
-                .get('/maintenance-tasks')
+                .get('/api/maintenance-tasks')
                 .set('Authorization', `Bearer ${adminToken}`)
                 .expect(200);
 
@@ -504,7 +504,7 @@ describe('Maintenance Task Controller', () => {
             await MaintenanceTask.deleteMany({});
 
             const res = await request(app)
-                .get('/maintenance-tasks')
+                .get('/api/maintenance-tasks')
                 .set('Authorization', `Bearer ${adminToken}`)
                 .expect(200);
 
@@ -515,12 +515,12 @@ describe('Maintenance Task Controller', () => {
 
     });
 
-    describe('PATCH /maintenance-tasks/:taskId', () => {
+    describe('PATCH /api/maintenance-tasks/:taskId', () => {
         let task;
 
         beforeEach(async () => {
             const taskRes = await request(app)
-                .post('/maintenance-tasks')
+                .post('/api/maintenance-tasks')
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send({
                     description: 'Patch Test Task',
@@ -556,7 +556,7 @@ describe('Maintenance Task Controller', () => {
         it('should update a maintenance task description', async () => {
             console.log(`current task ID: ${task._id}`);
             const res = await request(app)
-                .patch(`/maintenance-tasks/${task._id}`)
+                .patch(`/api/maintenance-tasks/${task._id}`)
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send({ description: 'Updated Description' })
                 .expect(200);
@@ -567,7 +567,7 @@ describe('Maintenance Task Controller', () => {
 
         it('should add status change to statusHistory when status changes', async () => {
             const res = await request(app)
-                .patch(`/maintenance-tasks/${task._id}`)
+                .patch(`/api/maintenance-tasks/${task._id}`)
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send({ status: 'In Progress' })
                 .expect(200);
@@ -580,7 +580,7 @@ describe('Maintenance Task Controller', () => {
 
         it('should reject update with nonexistent asset ID', async () => {
             const res = await request(app)
-                .patch(`/maintenance-tasks/${task._id}`)
+                .patch(`/api/maintenance-tasks/${task._id}`)
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send({
                     assets: [{
@@ -600,7 +600,7 @@ describe('Maintenance Task Controller', () => {
 
         it('should reject update with nonexistent assigned user', async () => {
             const res = await request(app)
-                .patch(`/maintenance-tasks/${task._id}`)
+                .patch(`/api/maintenance-tasks/${task._id}`)
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send({
                     assignedTo: {
@@ -618,7 +618,7 @@ describe('Maintenance Task Controller', () => {
 
         it('should reject update with nonexistent supplier', async () => {
             const res = await request(app)
-                .patch(`/maintenance-tasks/${task._id}`)
+                .patch(`/api/maintenance-tasks/${task._id}`)
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send({
                     contractor: {
@@ -635,7 +635,7 @@ describe('Maintenance Task Controller', () => {
 
         it('should reject performedDate before plannedDate', async () => {
             const res = await request(app)
-                .patch(`/maintenance-tasks/${task._id}`)
+                .patch(`/api/maintenance-tasks/${task._id}`)
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send({
                     performedDate: new Date(Date.now() - 48 * 60 * 60 * 1000) // before plannedDate
@@ -649,7 +649,7 @@ describe('Maintenance Task Controller', () => {
         it('should return 404 if task not found', async () => {
             const nonExistentId = new mongoose.Types.ObjectId();
             const res = await request(app)
-                .patch(`/maintenance-tasks/${nonExistentId}`)
+                .patch(`/api/maintenance-tasks/${nonExistentId}`)
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send({ description: 'Not Found' })
                 .expect(404);
@@ -659,12 +659,12 @@ describe('Maintenance Task Controller', () => {
         });
     });
 
-    describe('DELETE /maintenance-tasks/:taskId', () => {
+    describe('DELETE /api/maintenance-tasks/:taskId', () => {
         let task;
 
         beforeEach(async () => {
             const taskRes = await request(app)
-                .post('/maintenance-tasks')
+                .post('/api/maintenance-tasks')
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send({
                     description: 'Delete Test Task',
@@ -699,7 +699,7 @@ describe('Maintenance Task Controller', () => {
 
         it('should delete a maintenance task by ID', async () => {
             const res = await request(app)
-                .delete(`/maintenance-tasks/${task._id}`)
+                .delete(`/api/maintenance-tasks/${task._id}`)
                 .set('Authorization', `Bearer ${adminToken}`)
                 .expect(200);
 
@@ -708,7 +708,7 @@ describe('Maintenance Task Controller', () => {
 
             // Verify task is actually deleted
             const getRes = await request(app)
-                .get(`/maintenance-tasks/${task._id}`)
+                .get(`/api/maintenance-tasks/${task._id}`)
                 .set('Authorization', `Bearer ${adminToken}`)
                 .expect(404);
 
@@ -719,7 +719,7 @@ describe('Maintenance Task Controller', () => {
         it('should return 404 if task not found for deletion', async () => {
             const nonExistentId = new mongoose.Types.ObjectId();
             const res = await request(app)
-                .delete(`/maintenance-tasks/${nonExistentId}`)
+                .delete(`/api/maintenance-tasks/${nonExistentId}`)
                 .set('Authorization', `Bearer ${adminToken}`)
                 .expect(404);
 
