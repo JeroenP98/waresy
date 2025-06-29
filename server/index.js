@@ -7,6 +7,7 @@ import routes from "./routes/index.js";
 import cors from 'cors';
 import helmet from "helmet";
 import { rateLimit } from 'express-rate-limit'
+import hpp from 'hpp';
 
 const initializeApp = () => {
     dotenv.config();
@@ -37,8 +38,9 @@ const initializeApp = () => {
         .catch(err => console.error('MongoDB connection error:', err));
 
     // Middleware setup
-    app.use(bodyParser.urlencoded({ extended: true }));
-    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: true, limit: '50kb' }));
+    app.use(bodyParser.json({ limit: '50kb' }));
+    app.use(hpp()); // Prevent HTTP Parameter Pollution
 
     // JWT setup
     app.use((req, res, next) => {
