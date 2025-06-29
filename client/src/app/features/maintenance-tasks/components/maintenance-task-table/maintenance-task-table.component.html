@@ -94,7 +94,7 @@
           </select>
         </ng-container>
         <ng-template #badge>
-            <span class="badge" [ngClass]="getStatusClass(task.status)">
+            <span class="badge whitespace-nowrap" [ngClass]="getStatusClass(task.status)">
               {{ task.status }}
             </span>
         </ng-template>
@@ -108,7 +108,7 @@
 
         <button
           *ngIf="task.finalReport && task.status === 'Completed'"
-          class="btn btn-xs btn-outline btn-info"
+          class="btn btn-xs btn-outline btn-info whitespace-nowrap"
           (click)="openReportModal(task); $event.stopPropagation()">
           View Report
         </button>
